@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calm Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{--mist:#E8F0F1;--paper:#F8FBFB;--tide:#17353F;--lagoon:#2E7F86;--glass:#A9D3CF;--sand:#E6CFA9;--coral:#B5483D;--line:#C9DADC;--muted:#4F676E}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--mist);color:var(--tide);font:400 16px/1.55 'Figtree',system-ui,sans-serif}
+button,textarea,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--lagoon);outline-offset:2px}
+.app{max-width:720px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--paper);border-inline:1px solid var(--line)}
+
+header{display:flex;align-items:center;gap:14px;padding:14px 18px 8px}
+.orb{flex:none;width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--glass) 48%,var(--lagoon));animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.88)}50%{transform:scale(1.06)}}
+h1{font:500 1.55rem/1.1 'Newsreader',Georgia,serif;margin:0}
+header p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
+.urgent{margin-left:auto;background:none;border:1.5px solid var(--coral);color:var(--coral);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem;cursor:pointer}
+.urgent:hover{background:var(--coral);color:#fff}
+
+#track{list-style:none;margin:0;padding:6px 18px 10px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+#track li{border-top:4px solid var(--line);padding-top:6px;font-size:.78rem;color:var(--muted)}
+#track li.done{border-color:var(--lagoon)}
+#track li.now{border-color:var(--tide);color:var(--tide);font-weight:600}
+
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+#chat{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.m{max-width:86%;padding:11px 15px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere}
+.m.ai{align-self:flex-start;background:#fff;border:1px solid var(--line);border-top-left-radius:4px}
+.m.user{align-self:flex-end;background:var(--lagoon);color:#fff;border-bottom-right-radius:4px}
+.m.sys{align-self:center;max-width:94%;background:none;color:var(--muted);font-size:.88rem;text-align:center}
+.typing{display:flex;gap:5px;padding:14px 16px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--lagoon);opacity:.35;animation:dot 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,100%{opacity:.25}50%{opacity:1}}
+
+.card{align-self:stretch;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.card.alert{border:2px solid var(--coral)}
+.card h2{font:500 1.15rem/1.3 'Newsreader',Georgia,serif;margin:0 0 8px}
+.card p{margin:0 0 12px}
+.card .small{color:var(--muted);font-size:.85rem}
+.card .step{background:var(--sand);color:var(--tide);display:inline-block;border-radius:6px;padding:2px 9px;font-size:.82rem;font-weight:600;margin-bottom:10px}
+.frame{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:var(--mist)}
+audio{width:100%}
+.btn{background:var(--tide);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--lagoon)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:none;color:var(--tide);border:1.5px solid var(--tide)}
+.btn.ghost:hover{background:var(--mist)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 14px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--lagoon)}
+.opt.sel{background:var(--lagoon);border-color:var(--lagoon);color:#fff}
+.opt:disabled{cursor:default}
+.opt:disabled:not(.sel){opacity:.55}
+
+.breath{display:grid;justify-items:center;gap:10px;padding:10px 0 16px}
+.ring{width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--glass) 50%,var(--lagoon));transform:scale(.6)}
+.phase{font:500 1.25rem 'Newsreader',Georgia,serif}
+.anim{display:grid;justify-items:center;gap:12px;padding:6px 0 14px;width:100%}
+.senses{display:grid;gap:8px;width:100%;max-width:300px}
+.sense{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;transition:background .4s,border-color .4s}
+.sense.on{background:var(--glass);border-color:var(--lagoon)}
+.sense b{min-width:52px}
+.scene{position:relative;width:100%;max-width:300px;height:150px;border-radius:14px;overflow:hidden;background:linear-gradient(#cfeaf2,#eef7f1)}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.9}
+.sun{position:absolute;top:24px;left:50%;width:46px;height:46px;margin-left:-23px;border-radius:50%;background:#ffe39a}
+.sglow{animation:pulseSoft 5s ease-in-out infinite}
+.drift1{top:36px;width:70px;height:22px;animation:drift 30s linear infinite}
+.drift2{top:74px;width:54px;height:18px;animation:drift 44s linear infinite;animation-delay:-8s}
+.wings{display:flex;gap:44px}
+.wing{width:64px;height:64px;border-radius:50%;background:var(--glass);transition:background .25s,transform .25s;display:flex;align-items:center;justify-content:center;color:var(--tide)}
+.wing.on{background:var(--lagoon);color:#fff;transform:scale(1.1)}
+.bodymap{width:120px;height:210px}
+.bodymap .part{fill:var(--glass);stroke:var(--lagoon);stroke-width:1.2;opacity:.45;transition:opacity .5s,fill .5s}
+.bodymap .part.on{opacity:1;fill:var(--lagoon)}
+.sounds{margin:6px 0 14px}
+.srow{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--lagoon);background:#fff;color:var(--tide);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:500}
+.chip[aria-pressed=true]{background:var(--lagoon);color:#fff}
+
+#welcome{padding:18px;overflow-y:auto}
+#welcome h2{font:500 1.9rem/1.2 'Newsreader',Georgia,serif;margin:6px 0 10px}
+#welcome p{max-width:62ch}
+.consent{max-width:62ch;margin:12px 0;padding-left:20px}
+.consent li{margin-bottom:6px}
+.field{display:grid;gap:4px;margin:14px 0;max-width:360px}
+.card .field{max-width:none}
+.field label{font-weight:600;font-size:.92rem}
+.field input,.field select{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.agree{display:flex;gap:10px;align-items:flex-start;margin:10px 0;max-width:62ch}
+.agree input{margin-top:5px;width:18px;height:18px;accent-color:var(--lagoon);flex:none}
+.err{color:var(--coral);font-size:.88rem;margin:6px 0 0;min-height:1.2em}
+
+#tray{padding:10px 18px;border-top:1px solid var(--line);background:#fff}
+#tray p{margin:0 0 8px;font-size:.9rem}
+.chips{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.chips button{border:1.5px solid var(--lagoon);background:#fff;color:var(--tide);border-radius:8px;padding:9px 0;font-weight:600;cursor:pointer}
+.chips button:hover{background:var(--lagoon);color:#fff}
+
+footer{padding:10px 18px 14px;border-top:1px solid var(--line);background:var(--paper)}
+form{display:flex;gap:8px;align-items:flex-end}
+textarea{flex:1;resize:none;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;max-height:120px}
+.icon{flex:none;width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:1.15rem}
+.icon.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.icon:disabled,textarea:disabled{opacity:.5}
+.send{flex:none;height:44px;padding:0 18px}
+.tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:.82rem;color:var(--muted)}
+.link{background:none;border:0;color:var(--lagoon);font-weight:600;cursor:pointer;padding:2px 0;text-decoration:underline}
+
+dialog{border:0;border-radius:16px;padding:22px;max-width:480px;width:calc(100% - 32px);background:var(--paper);color:var(--tide)}
+dialog::backdrop{background:rgba(23,53,63,.55)}
+dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
+.lines{list-style:none;padding:0;margin:14px 0}
+.lines li{padding:10px 0;border-top:1px solid var(--line)}
+.lines b{display:block}
+
+#relaxBar{justify-content:flex-start;gap:8px;margin-bottom:4px}
+.mic-note{margin:0 0 8px;min-height:1.3em;font-size:.85rem;color:var(--muted)}
+.mic-note a{color:var(--lagoon);font-weight:600}
+.lang select{border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;background:#fff;font-size:.82rem}
+.icon.on{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(181,72,61,.45)}50%{box-shadow:0 0 0 8px rgba(181,72,61,0)}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:480px){.chips{grid-template-columns:repeat(5,1fr)}.m{max-width:92%}#track li{font-size:.72rem}}
+@media (prefers-reduced-motion:reduce){.orb,.typing i,.icon.on,.sglow,.drift1,.drift2{animation:none}.ring{transition:none!important;transform:scale(.8)!important}#chat{scroll-behavior:auto}.wing,.sense,.bodymap .part{transition:none}}
+@keyframes drift{from{transform:translateX(-90px)}to{transform:translateX(330px)}}
+@keyframes pulseSoft{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.14);opacity:1}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="orb" aria-hidden="true"></div>
+    <div><h1>Calm Room</h1><p>Student wellbeing support</p></div>
+    <button class="urgent" id="urgentBtn" type="button">Urgent help</button>
+  </header>
+
+  <ol id="track" aria-label="Session progress" hidden></ol>
+
+  <main>
+    <section id="welcome">
+      <h2>First-line support, one step at a time.</h2>
+      <p>I will start with a few safety questions, then listen, then ask some brief standard questions that counsellors use. After that we will practise a calming skill together. If you need a person, I will help you reach one.</p>
+      <ul class="consent" id="consentList"></ul>
+      <div class="field">
+        <label for="sid">Student ID (optional)</label>
+        <input id="sid" maxlength="20" autocomplete="off" placeholder="Leave blank to stay anonymous">
+      </div>
+      <label class="agree"><input type="checkbox" id="age"><span>I am 18 years old or older.</span></label>
+      <label class="agree"><input type="checkbox" id="agree"><span>I have read the information above and I agree to take part.</span></label>
+      <button class="btn" id="startBtn" type="button" disabled>Begin</button>
+    </section>
+
+    <div id="chat" role="log" aria-live="polite" hidden></div>
+    <div id="tray" hidden></div>
+  </main>
+
+  <footer id="foot" hidden>
+    <p class="mic-note" id="micNote" aria-live="polite"></p>
+    <form id="form" autocomplete="off">
+      <textarea id="msg" rows="1" aria-label="Your message" disabled></textarea>
+      <button type="button" class="icon" id="mic" aria-label="Speak your message" disabled>&#127908;</button>
+      <button class="btn send" id="send" type="submit" disabled>Send</button>
+    </form>
+    <div class="tools" id="relaxBar">
+      <button type="button" class="chip" id="soundBtn">Relax with sound</button>
+      <button type="button" class="chip" id="techniqueBtn">Try a calming technique</button>
+    </div>
+    <div class="tools">
+      <button type="button" class="link" id="counsellorBtn">Talk to a counsellor</button>
+      <label class="lang"><span class="sr">Voice language</span>
+        <select id="lang"><option value="en-US">English</option><option value="ar-SA">العربية</option><option value="ml-IN">മലയാളം</option><option value="hi-IN">हिन्दी</option></select></label>
+      <button type="button" class="link" id="voice" aria-pressed="false">Voice mode: Off</button>
+    </div>
+  </footer>
+</div>
+
+<dialog id="help" aria-labelledby="helpTitle">
+  <h2 id="helpTitle">You are not alone</h2>
+  <p id="helpMsg"></p>
+  <ul class="lines" id="helpLines"></ul>
+  <div class="row">
+    <button class="btn" id="helpRefer" type="button">Ask the counselling team to contact me</button>
+    <button class="btn ghost" id="helpClose" type="button">Close</button>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  const $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- protocol content ---------- */
+  const TRACK = ['Safety', 'Listen', 'Check-in', 'Support', 'Review'];
+  const TRACK_IDX = { welcome: -1, safety: 0, listen: 1, screen: 2, soothe: 3, practice: 3, checkout: 4, link: 4, done: 5, urgent: 5, talk: 5, support: 1 };
+  const STEM = 'Over the last 2 weeks, how often have you been bothered by the following?';
+  const FREQ = [['Not at all', 0], ['Several days', 1], ['More than half the days', 2], ['Nearly every day', 3]];
+  const YNS = [['Yes', 'yes'], ['No', 'no'], ['I would rather not answer', 'skip']];
+  const YN = [['Yes', 'yes'], ['No', 'no']];
+  // Ask Suicide-Screening Questions (ASQ), NIMH, public domain.
+  const ASQ = [
+    'In the past few weeks, have you wished you were dead?',
+    'In the past few weeks, have you felt that you or your family would be better off if you were dead?',
+    'In the past week, have you been having thoughts about killing yourself?',
+    'Have you ever tried to kill yourself?'
+  ];
+  // PHQ-9 and GAD-7 (Pfizer; free to use). Two-step: the 2-item versions first, the full scale only if the 2-item score is 3 or more.
+  const PHQ = [
+    'Little interest or pleasure in doing things',
+    'Feeling down, depressed, or hopeless',
+    'Trouble falling or staying asleep, or sleeping too much',
+    'Feeling tired or having little energy',
+    'Poor appetite or overeating',
+    'Feeling bad about yourself, or that you are a failure or have let yourself or your family down',
+    'Trouble concentrating on things, such as reading or watching television',
+    'Moving or speaking so slowly that other people could have noticed, or being so fidgety or restless that you have been moving around a lot more than usual',
+    'Thoughts that you would be better off dead, or of hurting yourself in some way'
+  ];
+  const GAD = [
+    'Feeling nervous, anxious or on edge',
+    'Not being able to stop or control worrying',
+    'Worrying too much about different things',
+    'Trouble relaxing',
+    'Being so restless that it is hard to sit still',
+    'Becoming easily annoyed or irritable',
+    'Feeling afraid, as if something awful might happen'
+  ];
+
+  const S = {
+    phase: 'welcome', history: [], sessionId: '', studentId: '', cfg: null, voiceOn: false, busy: false,
+    asq: {}, asqResult: 'negative', risk: '', level: 1, reasons: [], phqTotal: null, gadTotal: null,
+    scoreBefore: null, scoreAfter: null, emotion: '', rootCause: '', symptom: 'General',
+    exerciseKey: '', exercise: null, media: '', crisis: false, logged: false, referred: false,
+    favSound: '', checkinOffered: false, checkinDone: false
+  };
+
+  // When this page is hosted outside Apps Script (needed for microphone access), paste your web app /exec URL here.
+  const API_URL = '';
+  const IN_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+
+  function run(fn) {
+    const args = Array.prototype.slice.call(arguments, 1);
+    if (IN_GAS) {
+      return new Promise(function (ok, no) {
+        google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn].apply(null, args);
+      });
+    }
+    if (!API_URL) return Promise.reject(new Error('API_URL is not set.'));
+    return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || 'Request failed.'); return j.data; });
+  }
+  function contact() { return (S.cfg && S.cfg.contactName) || 'the university counselling team'; }
+
+  /* ---------- progress and composer ---------- */
+  function renderTrack() {
+    const ol = $('track'); ol.innerHTML = '';
+    const cur = TRACK_IDX[S.phase];
+    TRACK.forEach(function (l, i) {
+      const li = document.createElement('li'); li.textContent = l;
+      if (cur > i) li.className = 'done';
+      else if (cur === i) { li.className = 'now'; li.setAttribute('aria-current', 'step'); }
+      ol.appendChild(li);
+    });
+  }
+  function syncComposer() {
+    const on = ['listen', 'soothe', 'practice', 'talk', 'support'].indexOf(S.phase) > -1 && !S.crisis;
+    $('msg').disabled = !on; $('send').disabled = !on; $('mic').disabled = !on;
+    $('msg').placeholder = (S.phase === 'listen' || S.phase === 'support') ? 'Tell me what is on your mind' : (on ? 'Add a note if you need to' : 'Please use the options above');
+  }
+  function setPhase(p) { S.phase = p; renderTrack(); syncComposer(); const rb = $('relaxBar'); if (rb) rb.hidden = ['support', 'talk'].indexOf(p) < 0; }
+
+  /* ---------- chat helpers ---------- */
+  function scrollDown() { const c = $('chat'); c.scrollTop = c.scrollHeight; }
+  function addNode(n) { $('chat').appendChild(n); scrollDown(); return n; }
+  function addMsg(kind, text) {
+    const d = document.createElement('div'); d.className = 'm ' + kind; d.textContent = text;
+    addNode(d); if (kind === 'ai') speak(text); return d;
+  }
+  function typing() {
+    const d = document.createElement('div'); d.className = 'm ai typing'; d.setAttribute('aria-label', 'Typing');
+    d.innerHTML = '<i></i><i></i><i></i>'; return addNode(d);
+  }
+  function clearTray() { const t = $('tray'); t.hidden = true; t.innerHTML = ''; }
+  function newSessionBtn() {
+    const b = document.createElement('button'); b.className = 'btn ghost'; b.type = 'button'; b.textContent = 'Start a new session';
+    b.style.alignSelf = 'center'; b.onclick = function () { location.reload(); }; addNode(b);
+  }
+  function friendlyError(e) {
+    const m = e && e.message ? String(e.message) : '';
+    return /limit|busy|minute|valid|consent/i.test(m) ? m.replace(/^Error:\s*/, '') : 'Something went wrong on our side. Please try again.';
+  }
+
+  /* One question card. Resolves with the chosen value. */
+  function askOne(tag, text, options, note) {
+    return new Promise(function (resolve) {
+      const card = document.createElement('div'); card.className = 'card';
+      const t = document.createElement('span'); t.className = 'step'; t.textContent = tag; card.appendChild(t);
+      if (note) { const n = document.createElement('p'); n.className = 'small'; n.textContent = note; card.appendChild(n); }
+      const p = document.createElement('p'); p.textContent = text; card.appendChild(p);
+      const box = document.createElement('div'); box.className = 'opts';
+      options.forEach(function (o) {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o[0];
+        b.onclick = function () {
+          box.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+          b.classList.add('sel'); setTimeout(function () { resolve(o[1]); }, 250);
+        };
+        box.appendChild(b);
+      });
+      card.appendChild(box); addNode(card);
+      if (S.voiceOn) speak(text);
+    });
+  }
+
+  function showChips(kind) {
+    const t = $('tray'); t.innerHTML = '';
+    const p = document.createElement('p');
+    p.textContent = (kind === 'before' ? 'Where is your stress right now?' : 'Where is your stress now?') + ' 1 is calm, 10 is overwhelming.';
+    t.appendChild(p);
+    const row = document.createElement('div'); row.className = 'chips';
+    for (let n = 1; n <= 10; n++) {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = n;
+      b.setAttribute('aria-label', 'Stress level ' + n);
+      b.onclick = function () { pick(kind, n); };
+      row.appendChild(b);
+    }
+    t.appendChild(row); t.hidden = false;
+  }
+
+  /* ---------- voice: free browser speech, no key and no usage limit ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const Voice = { lang: 'en-US', rec: null, listening: false, speaking: false, token: 0 };
+  function langName() { const o = $('lang').options[$('lang').selectedIndex]; return o ? o.text : Voice.lang; }
+  function setNote(text, href) {
+    const n = $('micNote'); n.textContent = text || '';
+    if (text && href && /^https:\/\//i.test(href)) {
+      const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = ' Open the voice page.';
+      n.appendChild(a);
+    }
+  }
+  function syncVoiceBtn() { const b = $('voice'); b.textContent = 'Voice mode: ' + (S.voiceOn ? 'On' : 'Off'); b.setAttribute('aria-pressed', S.voiceOn); }
+
+  function pickVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const base = Voice.lang.slice(0, 2).toLowerCase();
+    const list = speechSynthesis.getVoices().filter(function (v) { return v.lang.toLowerCase().indexOf(base) === 0; });
+    const pref = /natural|neural|online|google|aria|jenny|samantha|karen|zira|female/i;
+    return list.find(function (v) { return pref.test(v.name); }) || list[0] || null;
+  }
+  function stopSpeaking() {
+    Voice.token++; Voice.speaking = false;
+    if ('speechSynthesis' in window) { try { speechSynthesis.cancel(); } catch (e) {} }
+  }
+  function cleanSpeech(t) { return String(t).replace(/[*_#`>~|]/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+  /* Speaks calmly, one sentence at a time (long utterances can cut off in some browsers). */
+  function speak(text) {
+    if (!S.voiceOn) return;
+    if (!('speechSynthesis' in window)) { afterSpeech(); return; }
+    stopSpeaking();
+    const v = pickVoice();
+    if (!v && Voice.lang.indexOf('en') !== 0) { setNote('This device has no ' + langName() + ' voice, so replies stay as text.'); afterSpeech(); return; }
+    const clean = cleanSpeech(text);
+    const parts = clean.match(/[^.!?\u061F\u0964]+[.!?\u061F\u0964]*/g) || [clean];
+    const my = ++Voice.token; let i = 0;
+    Voice.speaking = true;
+    const next = function () {
+      if (my !== Voice.token) return;
+      if (i >= parts.length) { Voice.speaking = false; afterSpeech(); return; }
+      const part = parts[i++].trim(); if (!part) { next(); return; }
+      const u = new SpeechSynthesisUtterance(part);
+      if (v) u.voice = v;
+      u.lang = v ? v.lang : Voice.lang; u.rate = 0.9; u.pitch = 0.95;
+      u.onend = next; u.onerror = function () { if (my === Voice.token) Voice.speaking = false; };
+      speechSynthesis.speak(u);
+    };
+    next();
+  }
+
+  /* In voice mode the student's turn starts automatically once the reply has been spoken. */
+  function afterSpeech() {
+    if (!S.voiceOn || !SR || Voice.listening || S.busy || S.crisis) return;
+    if (['listen', 'talk'].indexOf(S.phase) < 0) return;
+    setTimeout(function () { if (S.voiceOn && !Voice.listening && !Voice.speaking && !S.busy) startListening(); }, 600);
+  }
+
+  function blockedMic() {
+    $('mic').hidden = true; S.voiceOn = false; syncVoiceBtn();
+    setNote('The microphone is blocked in this view. Please type, or use the voice-enabled page.', S.cfg && S.cfg.voiceUrl);
+  }
+
+  function startListening() {
+    if (!SR || Voice.listening || $('mic').disabled) return;
+    stopSpeaking();
+    const r = new SR(); Voice.rec = r;
+    r.lang = Voice.lang; r.interimResults = true; r.continuous = false;
+    let finalText = '', failed = false;
+    r.onstart = function () {
+      Voice.listening = true; $('mic').classList.add('on');
+      setNote(S.voiceOn ? 'Listening. Speak whenever you are ready.' : 'Listening...');
+    };
+    r.onresult = function (e) {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const res = e.results[i];
+        if (res.isFinal) finalText += res[0].transcript + ' '; else interim += res[0].transcript;
+      }
+      $('msg').value = (finalText + interim).trim();
+    };
+    r.onerror = function (e) {
+      failed = true;
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') blockedMic();
+      else if (e.error === 'no-speech') setNote('I did not hear anything. Tap the microphone when you are ready.');
+      else if (e.error === 'language-not-supported') setNote('This browser cannot listen in ' + langName() + '. Please type instead.');
+      else if (e.error !== 'aborted') setNote('Voice input stopped. You can type instead.');
+    };
+    r.onend = function () {
+      Voice.listening = false; Voice.rec = null; $('mic').classList.remove('on');
+      const t = finalText.trim();
+      if (t) {
+        setNote('');
+        if (S.voiceOn) { $('msg').value = ''; send(t); } else $('msg').focus();
+      } else if (!failed) setNote('');
+    };
+    try { r.start(); } catch (e) { Voice.listening = false; Voice.rec = null; }
+  }
+
+  $('mic').onclick = function () { if (Voice.listening && Voice.rec) { Voice.rec.stop(); return; } startListening(); };
+  $('voice').onclick = function () {
+    S.voiceOn = !S.voiceOn; syncVoiceBtn();
+    if (!S.voiceOn) { stopSpeaking(); if (Voice.rec) Voice.rec.stop(); setNote(''); return; }
+    if (!SR) setNote('This browser can read replies aloud, but voice input needs Chrome, Edge or Safari.');
+    else afterSpeech();
+  };
+  $('lang').onchange = function () { Voice.lang = this.value; if (Voice.rec) Voice.rec.stop(); stopSpeaking(); setNote(''); };
+  if (!SR) $('mic').hidden = true;
+
+  /* ---------- welcome and consent ---------- */
+  function syncStart() { $('startBtn').disabled = !($('agree').checked && $('age').checked && S.cfg); }
+  $('agree').onchange = syncStart; $('age').onchange = syncStart;
+  $('startBtn').onclick = function () {
+    S.sessionId = 'S' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    S.studentId = $('sid').value.replace(/[^A-Za-z0-9\-]/g, '').slice(0, 20);
+    $('welcome').hidden = true; $('chat').hidden = false; $('foot').hidden = false;
+    startSupport();
+  };
+
+  /* ---------- emotional check-in and open support ---------- */
+  function showMoodChips() {
+    const t = $('tray'); t.innerHTML = '';
+    const p = document.createElement('p'); p.textContent = 'If it helps, tap the word closest to how you feel right now. You can also just type or speak.';
+    t.appendChild(p);
+    const row = document.createElement('div'); row.className = 'srow';
+    ['Anxious', 'Overwhelmed', 'Sad', 'Lonely', 'Angry', 'Exhausted', 'Numb', 'Okay'].forEach(function (w) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = w;
+      b.onclick = function () { send('I am feeling ' + w.toLowerCase() + '.'); };
+      row.appendChild(b);
+    });
+    t.appendChild(row); t.hidden = false;
+  }
+  function talkBtn() {
+    const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = 'Keep talking with me';
+    b.style.alignSelf = 'center';
+    b.onclick = function () {
+      b.remove(); setPhase('talk');
+      addMsg('ai', 'Of course. I am here, and there is no rush. What would you like to talk about?');
+      $('msg').focus();
+    };
+    addNode(b);
+  }
+
+  /* ---------- warm front door ---------- */
+  function startSupport() {
+    setPhase('support');
+    addMsg('ai', 'Hello, and welcome. This is a calm, private space, and I am really glad you came. I am here to listen and to help in any way I can, whether it is exams, studies, family, friendships, feeling low, or just a hard day. What is on your mind right now?');
+    showMoodChips();
+    $('msg').focus();
+  }
+
+  /* An optional, gentle check-in the AI may suggest once there is rapport. Never forced. */
+  function offerCheckin() {
+    if (S.checkinOffered || S.checkinDone || S.phase !== 'support') return;
+    S.checkinOffered = true;
+    const card = document.createElement('div'); card.className = 'card';
+    const h2 = document.createElement('h2'); h2.textContent = 'A short check-in, if you would like'; card.appendChild(h2);
+    const p = document.createElement('p'); p.textContent = 'If it would help, I can ask a few short, standard questions to understand how you have been feeling lately. It is completely optional, and we can keep talking either way.'; card.appendChild(p);
+    const row = document.createElement('div'); row.className = 'row';
+    const yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn'; yes.textContent = 'Yes, let us do it';
+    const no = document.createElement('button'); no.type = 'button'; no.className = 'btn ghost'; no.textContent = 'Not now, let us keep talking';
+    yes.onclick = function () { yes.disabled = true; no.disabled = true; safetyThenScreen(); };
+    no.onclick = function () { yes.disabled = true; no.disabled = true; addMsg('ai', 'That is completely fine. I am right here. What else is on your mind?'); };
+    row.appendChild(yes); row.appendChild(no); card.appendChild(row); addNode(card);
+  }
+
+  /* The optional deeper path: a light safety check, then the brief questionnaires and triage. */
+  async function safetyThenScreen() {
+    setPhase('safety');
+    addMsg('ai', 'Thank you. I will start with a couple of gentle questions, just to make sure you get the right kind of support. You can choose not to answer any of them.');
+    const a = {};
+    for (let i = 0; i < 4; i++) a['q' + (i + 1)] = await askOne('Gentle question ' + (i + 1) + ' of 4', ASQ[i], YNS);
+    const positive = ['q1', 'q2', 'q3', 'q4'].some(function (k) { return a[k] !== 'no'; });
+    if (positive) a.q5 = await askOne('One more question', 'Are you having thoughts of killing yourself right now?', YN);
+    S.asq = a;
+    S.asqResult = a.q5 === 'yes' ? 'acute' : (positive ? 'positive' : 'negative');
+    if (S.asqResult === 'acute') { handleUrgent('Safety screen: current thoughts of suicide.'); return; }
+    if (S.asqResult === 'positive') {
+      S.risk = 'positive'; S.level = Math.max(S.level, 3); S.reasons.push('ASQ positive (non-acute)');
+      addMsg('ai', 'Thank you for answering so honestly. That took courage, and I would like you to have the support of a person as well as me. I can help you ask ' + contact() + ' to get in touch, and we can still talk afterwards.');
+      await referralCard({ intro: 'Sharing your contact details is your choice. If you prefer, choose Not now and we can carry on.' });
+    }
+    screening();
+  }
+
+  /* ---------- step 2: listen (AI conversation) ---------- */
+  async function send(text) {
+    text = (text || '').trim();
+    if (!text || S.busy || ['listen', 'soothe', 'practice', 'talk', 'support'].indexOf(S.phase) < 0 || S.crisis) return;
+    S.busy = true; clearTray();
+    addMsg('user', text); S.history.push({ role: 'user', text: text });
+    const dots = typing();
+    try {
+      const r = await run('chatTurn', {
+        sessionId: S.sessionId, stage: S.phase === 'support' ? 'support' : (S.phase === 'listen' ? 'listen' : (S.phase === 'talk' ? 'talk' : 'aside')),
+        history: S.history, known: { scoreBefore: S.scoreBefore }, ctx: { risk: S.risk }
+      });
+      dots.remove();
+      if (r.crisis) { handleUrgent('Crisis language detected during the conversation.'); return; }
+      addMsg('ai', r.reply); S.history.push({ role: 'model', text: r.reply });
+      if (S.phase === 'support' || S.phase === 'listen') {
+        if (r.scoreBefore) S.scoreBefore = r.scoreBefore;
+        if (r.emotion) S.emotion = r.emotion;
+        if (r.rootCause) S.rootCause = r.rootCause;
+        if (r.symptom) S.symptom = r.symptom;
+        if (r.exerciseKey) S.exerciseKey = r.exerciseKey;
+        if (S.phase === 'listen' && r.ready) setTimeout(screening, 1100);
+        else if (S.phase === 'support' && r.offerCheckin && !S.checkinOffered && !S.checkinDone) setTimeout(offerCheckin, 1100);
+      }
+    } catch (e) {
+      dots.remove(); addMsg('sys', friendlyError(e));
+    } finally { S.busy = false; }
+  }
+  $('form').onsubmit = function (e) { e.preventDefault(); const v = $('msg').value; $('msg').value = ''; send(v); };
+  $('msg').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('form').requestSubmit(); }
+  });
+  function pick(kind, n) {
+    clearTray();
+    if (kind === 'before') { S.scoreBefore = n; send('My stress level right now is ' + n + ' out of 10.'); }
+    else { S.scoreAfter = n; addMsg('user', n + ' out of 10'); finish(); }
+  }
+
+  /* ---------- step 3: structured screening (PHQ-2/GAD-2, then PHQ-9/GAD-7) and triage ---------- */
+  async function screening() {
+    S.checkinDone = true; setPhase('screen'); clearTray();
+    addMsg('ai', 'Thank you. These are a few brief, standard questions that counsellors often use. They are not a diagnosis; they just help me see how strongly things have been affecting you.');
+    const phq = [], gad = [];
+    for (let i = 0; i < 2; i++) phq[i] = await askOne('Mood question ' + (i + 1) + ' of 2', PHQ[i], FREQ, STEM);
+    for (let i = 0; i < 2; i++) gad[i] = await askOne('Worry question ' + (i + 1) + ' of 2', GAD[i], FREQ, STEM);
+    if (phq[0] + phq[1] >= 3) for (let i = 2; i < 9; i++) phq[i] = await askOne('Mood question ' + (i + 1) + ' of 9', PHQ[i], FREQ, STEM);
+    if (gad[0] + gad[1] >= 3) for (let i = 2; i < 7; i++) gad[i] = await askOne('Worry question ' + (i + 1) + ' of 7', GAD[i], FREQ, STEM);
+    const imp = await askOne('Last question', 'Overall, how much have these difficulties affected your studies, sleep or relationships?',
+      [['Not at all', 0], ['A little', 1], ['Quite a lot', 2], ['Extremely', 3]]);
+
+    let res = null;
+    try { res = await run('evaluate', { asq: S.asq, phq: phq, gad: gad, impairment: imp }); } catch (e) { res = null; }
+    if (!res) {
+      res = { level: 2, reasons: ['Scoring was unavailable'], phq9: null, phq2: null, gad7: null, gad2: null, item9: 0 };
+      addMsg('sys', 'Scoring was unavailable, so I will recommend speaking with the counselling team to be safe.');
+    }
+    S.level = Math.max(S.level, res.level);
+    res.reasons.forEach(function (r) { if (S.reasons.indexOf(r) < 0) S.reasons.push(r); });
+    S.phqTotal = res.phq9 != null ? res.phq9 : res.phq2;
+    S.gadTotal = res.gad7 != null ? res.gad7 : res.gad2;
+
+    // PHQ-9 item 9 endorsed: ask the acuity question again before going on.
+    if (res.item9 >= 1 && S.asq.q5 !== 'yes') {
+      const a5 = await askOne('Safety check', 'You mentioned that thoughts of being better off dead, or of hurting yourself, have come up. Are you having thoughts of killing yourself right now?', YN);
+      if (a5 === 'yes') { handleUrgent('PHQ-9 item 9 endorsed with current suicidal thoughts.'); return; }
+      S.risk = 'positive';
+    }
+
+    showTriage();
+    if (S.level >= 3 && !S.referred) {
+      await referralCard({ intro: 'You can share your contact details so the team can reach you. This is your choice, and you can still continue with the calming exercise afterwards.' });
+    }
+    startSoothe();
+  }
+
+  function showTriage() {
+    const c = contact();
+    const msg = S.level >= 3
+      ? 'Your answers suggest that you would benefit from speaking with a person soon, ideally within the next one or two working days. I would like to help you request that, and we can still practise a calming skill together in the meantime.'
+      : S.level === 2
+        ? 'Your answers suggest that these difficulties are having a real effect on you, beyond everyday stress. Guided self-help can really help, and I also recommend arranging a conversation with ' + c + '. I will help you do that after the exercise.'
+        : 'Your answers suggest that, for now, what you are feeling is at the milder end. It still deserves care, so let us work on a practical skill together. You can ask to speak with ' + c + ' at any time.';
+    addMsg('ai', msg);
+  }
+
+  /* ---------- step 4: support (soothe, then practise) ---------- */
+  function ytId(u) { const m = u.match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/); return m ? m[1] : null; }
+  function frame(src, title) {
+    const f = document.createElement('iframe'); f.className = 'frame'; f.src = src; f.title = title;
+    f.allow = 'encrypted-media; picture-in-picture'; f.allowFullscreen = true; return f;
+  }
+  function mediaEl(m) {
+    const t = m.type.toLowerCase();
+    if (t.indexOf('youtube') > -1) { const id = ytId(m.url); return id ? frame('https://www.youtube-nocookie.com/embed/' + id, m.title) : null; }
+    if (t.indexOf('spotify') > -1) {
+      const s = m.url.replace('open.spotify.com/', 'open.spotify.com/embed/').replace('/embed/embed/', '/embed/');
+      return frame(s, m.title);
+    }
+    if (t.indexOf('audio') > -1) { const a = document.createElement('audio'); a.controls = true; a.preload = 'none'; a.src = m.url; return a; }
+    return null;
+  }
+
+  function pacer(phases, rounds) {
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const w = document.createElement('div'); w.className = 'breath';
+    const ring = document.createElement('div'); ring.className = 'ring';
+    const lab = document.createElement('div'); lab.className = 'phase';
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'btn ghost'; go.textContent = 'Start the guide';
+    const idle = 'Press start when you are ready';
+    lab.textContent = idle;
+    let timer = null, running = false;
+    function stop(msg) {
+      running = false; clearTimeout(timer);
+      if (!reduce) { ring.style.transition = 'transform 1s ease-in-out'; ring.style.transform = 'scale(.6)'; }
+      lab.textContent = msg || idle; go.textContent = 'Start the guide';
+    }
+    function step(r, p) {
+      if (!running || !w.isConnected) return;
+      if (p === phases.length) {
+        r++; p = 0;
+        if (rounds && r >= rounds) { stop('Well done. Let your breathing return to normal.'); return; }
+      }
+      const ph = phases[p]; lab.textContent = ph[0];
+      if (!reduce && ph[2] !== undefined) { ring.style.transition = 'transform ' + ph[1] + 's ease-in-out'; ring.style.transform = 'scale(' + ph[2] + ')'; }
+      timer = setTimeout(function () { step(r, p + 1); }, ph[1] * 1000);
+    }
+    go.onclick = function () { if (running) { stop(); return; } running = true; go.textContent = 'Stop'; step(0, 0); };
+    w.appendChild(ring); w.appendChild(lab); w.appendChild(go); return w;
+  }
+
+  /* ---------- guided-exercise animations (CSS transforms only, reduced-motion aware) ---------- */
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  function reduced() { return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+  /* 5-4-3-2-1 grounding: senses light up one at a time. */
+  function grounding() {
+    const w = document.createElement('div'); w.className = 'anim';
+    const box = document.createElement('div'); box.className = 'senses';
+    const data = [['See', '5 things around you'], ['Touch', '4 things you can feel'], ['Hear', '3 sounds'], ['Smell', '2 things'], ['Taste', '1 thing, or a sip of water']];
+    const rows = data.map(function (d) {
+      const r = document.createElement('div'); r.className = 'sense';
+      const b = document.createElement('b'); b.textContent = d[0];
+      const s = document.createElement('span'); s.textContent = d[1];
+      r.appendChild(b); r.appendChild(s); box.appendChild(r); return r;
+    });
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'btn ghost'; go.textContent = 'Guide me through it';
+    let t = null, i = 0, on = false;
+    function clear() { rows.forEach(function (r) { r.classList.remove('on'); }); }
+    function stop() { on = false; clearInterval(t); clear(); go.textContent = 'Guide me through it'; }
+    function tick() {
+      if (!w.isConnected) { clearInterval(t); return; }
+      clear();
+      if (i >= rows.length) { stop(); return; }
+      rows[i].classList.add('on'); i++;
+    }
+    go.onclick = function () { if (on) { stop(); return; } on = true; i = 0; go.textContent = 'Stop'; tick(); t = setInterval(tick, 5000); };
+    w.appendChild(box); w.appendChild(go); return w;
+  }
+
+  /* Progressive muscle relaxation: a simple body map highlights each group in turn. */
+  function bodyScan() {
+    const w = document.createElement('div'); w.className = 'anim';
+    const svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 120 210'); svg.setAttribute('class', 'bodymap'); svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'A calm body outline that highlights each muscle group in turn.');
+    const parts = [
+      ['head', 'circle', { cx: 60, cy: 24, r: 15 }],
+      ['shoulders', 'rect', { x: 34, y: 42, width: 52, height: 16, rx: 8 }],
+      ['arms', 'rect', { x: 20, y: 58, width: 80, height: 13, rx: 6 }],
+      ['hands', 'rect', { x: 14, y: 72, width: 92, height: 10, rx: 5 }],
+      ['torso', 'rect', { x: 40, y: 60, width: 40, height: 66, rx: 10 }],
+      ['legs', 'rect', { x: 44, y: 128, width: 32, height: 74, rx: 10 }]
+    ];
+    const order = ['hands', 'arms', 'shoulders', 'head', 'torso', 'legs'];
+    const map = {};
+    parts.forEach(function (d) {
+      const el = document.createElementNS(SVGNS, d[1]);
+      for (const k in d[2]) el.setAttribute(k, d[2][k]);
+      el.setAttribute('class', 'part'); svg.appendChild(el); map[d[0]] = el;
+    });
+    const cap = document.createElement('p'); cap.className = 'small'; cap.textContent = 'Press start, then tense each highlighted area for five seconds and release.';
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'btn ghost'; go.textContent = 'Start the body scan';
+    let t = null, i = 0, on = false;
+    function clear() { order.forEach(function (k) { map[k].classList.remove('on'); }); }
+    function stop() { on = false; clearInterval(t); clear(); go.textContent = 'Start the body scan'; }
+    function tick() {
+      if (!w.isConnected) { clearInterval(t); return; }
+      clear();
+      if (i >= order.length) { stop(); return; }
+      map[order[i]].classList.add('on'); i++;
+    }
+    go.onclick = function () { if (on) { stop(); return; } on = true; i = 0; go.textContent = 'Stop'; tick(); t = setInterval(tick, 6500); };
+    w.appendChild(svg); w.appendChild(cap); w.appendChild(go); return w;
+  }
+
+  /* Safe-place visualisation: a calm drifting scene, pure CSS. */
+  function safeScene() {
+    const w = document.createElement('div'); w.className = 'anim';
+    const scene = document.createElement('div'); scene.className = 'scene'; scene.setAttribute('aria-hidden', 'true');
+    const sun = document.createElement('div'); sun.className = 'sun' + (reduced() ? '' : ' sglow');
+    const c1 = document.createElement('div'); c1.className = 'cloud' + (reduced() ? '' : ' drift1');
+    const c2 = document.createElement('div'); c2.className = 'cloud' + (reduced() ? '' : ' drift2');
+    if (reduced()) { c1.style.left = '30px'; c2.style.left = '180px'; }
+    scene.appendChild(sun); scene.appendChild(c1); scene.appendChild(c2);
+    const cap = document.createElement('p'); cap.className = 'small'; cap.textContent = 'Let your gaze rest softly on the scene as you picture your own safe place.';
+    w.appendChild(scene); w.appendChild(cap); return w;
+  }
+
+  /* Butterfly hug: two wings glow alternately at a slow, steady pace. */
+  function butterfly() {
+    const w = document.createElement('div'); w.className = 'anim';
+    const row = document.createElement('div'); row.className = 'wings';
+    const left = document.createElement('div'); left.className = 'wing'; left.textContent = 'L';
+    const right = document.createElement('div'); right.className = 'wing'; right.textContent = 'R';
+    row.appendChild(left); row.appendChild(right);
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'btn ghost'; go.textContent = 'Start the rhythm';
+    let t = null, side = 0, on = false;
+    function stop() { on = false; clearInterval(t); left.classList.remove('on'); right.classList.remove('on'); go.textContent = 'Start the rhythm'; }
+    function tick() {
+      if (!w.isConnected) { clearInterval(t); return; }
+      left.classList.toggle('on', side === 0); right.classList.toggle('on', side === 1); side ^= 1;
+    }
+    go.onclick = function () { if (on) { stop(); return; } on = true; side = 0; go.textContent = 'Stop'; tick(); t = setInterval(tick, 950); };
+    w.appendChild(row); w.appendChild(go); return w;
+  }
+
+  /* Which animation attaches to which step of which exercise. */
+  const EX_ANIM = {
+    BOX_BREATHING: { step: 1, make: function () { return pacer([['Breathe in', 4, 1], ['Hold', 4], ['Breathe out', 4, 0.6], ['Hold', 4]], 4); } },
+    GROUNDING_54321: { step: 0, make: grounding },
+    PMR: { step: 0, make: bodyScan },
+    SAFE_PLACE: { step: 0, make: safeScene },
+    BUTTERFLY: { step: 1, make: butterfly }
+  };
+
+  const Sound = {
+    ctx: null, src: null, gain: null, lfo: null, timer: null, kind: '',
+    start: function (kind, minutes) {
+      this.stop();
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+      const c = this.ctx = this.ctx || new AC(); if (c.resume) c.resume();
+      const len = c.sampleRate * 4, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+      const white = (kind === 'rain' || kind === 'wind' || kind === 'fire');
+      if (white) { for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; }
+      else { let last = 0; for (let i = 0; i < len; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.5; } }
+      const src = c.createBufferSource(); src.buffer = buf; src.loop = true;
+      const f = c.createBiquadFilter(), g = c.createGain(); g.gain.value = 0;
+      if (kind === 'rain') { f.type = 'bandpass'; f.frequency.value = 3200; f.Q.value = 0.4; }
+      else if (kind === 'wind') { f.type = 'lowpass'; f.frequency.value = 500; }
+      else if (kind === 'fire') { f.type = 'lowpass'; f.frequency.value = 1100; }
+      else { f.type = 'lowpass'; f.frequency.value = kind === 'ocean' ? 700 : 400; }
+      src.connect(f); f.connect(g); g.connect(c.destination);
+      const base = kind === 'rain' ? 0.18 : (kind === 'wind' ? 0.3 : (kind === 'fire' ? 0.22 : 0.45));
+      g.gain.setTargetAtTime(base, c.currentTime, 1.2);
+      src.start();
+      if (kind === 'ocean' || kind === 'wind') {
+        // a slow swell for waves and gusts
+        const o = c.createOscillator(), og = c.createGain();
+        o.frequency.value = kind === 'ocean' ? 0.1 : 0.06; og.gain.value = kind === 'ocean' ? 0.28 : 0.2;
+        o.connect(og); og.connect(g.gain); o.start(); this.lfo = o;
+      }
+      if (kind === 'fire') {
+        // random crackle: short gain pops on top of the low rumble
+        const self = this;
+        this.crackle = setInterval(function () {
+          if (!self.ctx || self.kind !== 'fire') return;
+          const t0 = self.ctx.currentTime;
+          g.gain.cancelScheduledValues(t0);
+          g.gain.setValueAtTime(base, t0);
+          g.gain.linearRampToValueAtTime(base + 0.12 + Math.random() * 0.12, t0 + 0.02);
+          g.gain.exponentialRampToValueAtTime(base, t0 + 0.12 + Math.random() * 0.1);
+        }, 180);
+      }
+      this.src = src; this.gain = g; this.kind = kind;
+      if (minutes) this.timer = setTimeout(function () { Sound.stop(); }, minutes * 60000);
+      return true;
+    },
+    stop: function () {
+      clearTimeout(this.timer); clearInterval(this.crackle); this.crackle = null;
+      if (this.gain && this.ctx) { try { this.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.2); } catch (e) {} }
+      const s = this.src, l = this.lfo;
+      setTimeout(function () { try { if (s) s.stop(); } catch (e) {} try { if (l) l.stop(); } catch (e) {} }, 800);
+      this.src = null; this.lfo = null; this.gain = null; this.kind = '';
+    }
+  };
+  // Built-in soundscapes plus any curated tracks the counsellor adds to the Media_Library sheet.
+  const SYNTH_SOUNDS = [['rain', 'Soft rain'], ['ocean', 'Ocean waves'], ['wind', 'Gentle wind'], ['fire', 'Crackling fire'], ['deep', 'Deep calm']];
+  /* All sound choices: built-in soundscapes plus any curated tracks from the Media_Library sheet. */
+  function soundChoices() {
+    const list = SYNTH_SOUNDS.map(function (s) { return { id: 'synth:' + s[0], label: s[1], kind: s[0] }; });
+    (S.cfg.media || []).forEach(function (m) {
+      if (/relax|calm|sleep|focus|nature|music/i.test(m.tag + ' ' + m.type)) list.push({ id: 'track:' + m.url, label: m.title, media: m });
+    });
+    return list;
+  }
+  function playChoice(c) {
+    Sound.stop(); stopTrack();
+    if (c.kind) return Sound.start(c.kind, 10);
+    if (c.media) { playTrack(c.media); return true; }
+    return false;
+  }
+  var _track = null;
+  function stopTrack() { if (_track) { try { _track.pause(); } catch (e) {} _track = null; } }
+  function playTrack(m) {
+    const t = m.type.toLowerCase();
+    if (t.indexOf('audio') > -1) { _track = new Audio(m.url); _track.loop = true; _track.play().catch(function () {}); }
+    else { window.open(m.url, '_blank', 'noopener'); }
+  }
+
+  /* A reusable sound panel. The first time, it gently asks which sound the student finds calming. */
+  function soundRow() {
+    const w = document.createElement('div'); w.className = 'sounds';
+    const t = document.createElement('p'); t.className = 'small';
+    t.textContent = S.favSound ? 'Your calming sound is ready. It switches off after 10 minutes.' : 'Which sound helps you feel calm? Tap one to play it. It switches off after 10 minutes.';
+    const row = document.createElement('div'); row.className = 'srow';
+    const choices = soundChoices();
+    choices.forEach(function (c) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = c.label; b.setAttribute('aria-pressed', 'false');
+      if (S.favSound === c.id) b.setAttribute('aria-pressed', 'true');
+      b.onclick = function () {
+        const was = b.getAttribute('aria-pressed') === 'true';
+        row.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+        Sound.stop(); stopTrack();
+        if (!was) { if (playChoice(c)) { b.setAttribute('aria-pressed', 'true'); S.favSound = c.id; } }
+      };
+      row.appendChild(b);
+    });
+    w.appendChild(t); w.appendChild(row);
+    if (S.favSound) {
+      const choice = choices.filter(function (c) { return c.id === S.favSound; })[0];
+      if (choice) setTimeout(function () { if (w.isConnected && Sound.kind === '' && !_track) { playChoice(choice); row.querySelectorAll('button').forEach(function (x, i) { x.setAttribute('aria-pressed', choices[i].id === S.favSound ? 'true' : 'false'); }); } }, 300);
+    }
+    return w;
+  }
+
+  /* Toolbar: open a sound panel or a menu of quick techniques in the chat at any time. */
+  function openSoundPanel() {
+    if (['support', 'talk'].indexOf(S.phase) < 0) return;
+    addMsg('ai', S.favSound ? 'Here is your calming sound. Take a slow breath and let it settle you.' : 'Let us find a sound that calms you. There is no right answer; just choose whatever feels good.');
+    const card = document.createElement('div'); card.className = 'card';
+    card.appendChild(soundRow()); addNode(card);
+  }
+  function openTechniqueMenu() {
+    if (['support', 'talk'].indexOf(S.phase) < 0) return;
+    const list = S.cfg.exercises || [];
+    if (!list.length) return;
+    addMsg('ai', 'Of course. Here are a few short techniques. Pick whichever feels right, and I will guide you through it slowly.');
+    const card = document.createElement('div'); card.className = 'card';
+    const box = document.createElement('div'); box.className = 'opts';
+    list.forEach(function (ex) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = ex.title;
+      b.onclick = function () { box.querySelectorAll('button').forEach(function (x) { x.disabled = true; }); b.classList.add('sel'); runTechnique(ex); };
+      box.appendChild(b);
+    });
+    card.appendChild(box); addNode(card);
+  }
+
+  /* Standalone technique runner for the toolbar. Returns to the conversation, not the clinical check-out. */
+  function runTechnique(ex) {
+    const prev = S.phase;
+    setPhase('practice'); S.exercise = ex;
+    addMsg('ai', 'Let us try ' + ex.title + ' together. I will share one step at a time; take it at your own pace.');
+    techStep(ex, 0, prev);
+  }
+  function techStep(ex, i, backTo) {
+    const steps = ex.steps, card = document.createElement('div'); card.className = 'card';
+    const tag = document.createElement('span'); tag.className = 'step'; tag.textContent = 'Step ' + (i + 1) + ' of ' + steps.length;
+    const p = document.createElement('p'); p.textContent = steps[i];
+    const anim = EX_ANIM[ex.key];
+    card.appendChild(tag); card.appendChild(p);
+    if (anim && anim.step === i) card.appendChild(anim.make());
+    const b = document.createElement('button'); b.className = 'btn'; b.type = 'button';
+    b.textContent = i + 1 < steps.length ? 'Next step' : 'I have finished';
+    b.onclick = function () {
+      b.disabled = true;
+      if (i + 1 < steps.length) techStep(ex, i + 1, backTo);
+      else { setPhase(backTo === 'talk' ? 'talk' : 'support'); addMsg('ai', 'Well done. Notice how your body feels now, even a little. I am still here whenever you want to keep talking.'); $('msg').focus(); }
+    };
+    card.appendChild(b); addNode(card);
+  }
+
+  function startSoothe() {
+    setPhase('soothe'); clearTray();
+    const pool = (S.cfg.media || []).filter(function (m) { return m.tag.toLowerCase() === S.symptom.toLowerCase(); });
+    const m = pool.length ? pool[0] : null;
+    const el = m ? mediaEl(m) : null;
+    addMsg('ai', el
+      ? 'Before we do any thinking work, let us give your mind a moment to settle. Press play when you are ready.'
+      : 'Before we do any thinking work, let us settle your body first. Follow the circle with your breath for a minute. Press Start the guide when you are ready.');
+    const card = document.createElement('div'); card.className = 'card';
+    if (el) {
+      const h = document.createElement('h2'); h.textContent = m.title; card.appendChild(h); card.appendChild(el);
+      if (m.note) { const n = document.createElement('p'); n.className = 'small'; n.style.marginTop = '10px'; n.textContent = m.note; card.appendChild(n); }
+    } else card.appendChild(pacer([['Breathe in', 4, 1], ['Breathe out', 6, 0.6]], 6));
+    card.appendChild(soundRow());
+    const b = document.createElement('button'); b.className = 'btn'; b.type = 'button'; b.textContent = 'I feel ready to continue';
+    b.onclick = function () { b.disabled = true; S.media = el ? m.title : 'In-app breathing guide'; startPractice(); };
+    card.appendChild(b); addNode(card);
+  }
+
+  function chooseExercise() {
+    const list = S.cfg.exercises || [];
+    return list.find(function (e) { return e.key === S.exerciseKey; }) ||
+      list.find(function (e) { return e.tags.some(function (t) { return t.toLowerCase() === S.symptom.toLowerCase(); }); }) || list[0];
+  }
+  function startPractice() {
+    setPhase('practice');
+    S.exercise = chooseExercise();
+    if (!S.exercise) { startCheckout(); return; }
+    addMsg('ai', 'Let us try ' + S.exercise.title + '. I will share one step at a time. Tell me when you are ready for the next one.');
+    showStep(0);
+  }
+  function showStep(i) {
+    const steps = S.exercise.steps, card = document.createElement('div'); card.className = 'card';
+    const tag = document.createElement('span'); tag.className = 'step'; tag.textContent = 'Step ' + (i + 1) + ' of ' + steps.length;
+    const p = document.createElement('p'); p.textContent = steps[i];
+    const b = document.createElement('button'); b.className = 'btn'; b.type = 'button';
+    b.textContent = i + 1 < steps.length ? 'I did this, show the next step' : 'I have finished';
+    b.onclick = function () { b.disabled = true; if (i + 1 < steps.length) showStep(i + 1); else startCheckout(); };
+    card.appendChild(tag); card.appendChild(p);
+    const anim = EX_ANIM[S.exercise.key];
+    if (anim && anim.step === i) card.appendChild(anim.make());
+    card.appendChild(b); addNode(card);
+  }
+
+  /* ---------- step 5: review (re-check, step-up, link to a person) ---------- */
+  function startCheckout() {
+    Sound.stop(); if (typeof stopTrack === 'function') stopTrack(); setPhase('checkout');
+    addMsg('ai', 'Well done for staying with it. Before we finish, how stressed do you feel now?');
+    showChips('after');
+  }
+  async function finish() {
+    S.busy = true; const dots = typing();
+    let conclusion = '';
+    try {
+      const r = await run('chatTurn', {
+        sessionId: S.sessionId, stage: 'checkout', history: S.history,
+        ctx: { scoreBefore: S.scoreBefore, scoreAfter: S.scoreAfter, exercise: S.exercise ? S.exercise.title : '', rootCause: S.rootCause, level: stepUpLevel() }
+      });
+      dots.remove();
+      if (r.crisis) { S.busy = false; handleUrgent('Crisis language detected at check-out.'); return; }
+      addMsg('ai', r.reply); conclusion = r.conclusion || '';
+    } catch (e) {
+      dots.remove(); addMsg('sys', friendlyError(e));
+    }
+    S.busy = false;
+
+    // Step-up rule: no improvement, or still highly stressed, raises the level to at least moderate.
+    const lvl = stepUpLevel();
+    if (lvl > S.level) { S.level = lvl; S.reasons.push('No clear improvement after self-help'); }
+    setPhase('link');
+    if (S.level >= 2 && !S.referred) {
+      addMsg('ai', 'Based on everything you have shared, I recommend speaking with ' + contact() + '. It is a sensible next step, not a sign that anything has gone wrong. Shall I help you request that now?');
+      await referralCard({ intro: 'Sharing your contact details is your choice.' });
+    }
+    logNow(conclusion || ('Stress ' + (S.scoreBefore || '?') + ' to ' + S.scoreAfter + ' after ' + (S.exercise ? S.exercise.title : 'session') + '. Triage level ' + S.level + '.'));
+    setPhase('done');
+    addMsg('sys', 'Your session is complete. You can return at any time. If things become harder, use Urgent help at the top of the page.');
+    talkBtn(); newSessionBtn();
+  }
+  function stepUpLevel() {
+    const noGain = S.scoreAfter != null && S.scoreBefore != null && S.scoreAfter >= S.scoreBefore;
+    const high = S.scoreAfter != null && S.scoreAfter >= 8;
+    return (noGain || high) ? Math.max(S.level, 2) : S.level;
+  }
+
+  /* ---------- referral to the counselling team ---------- */
+  function helpList() {
+    const ul = document.createElement('ul'); ul.className = 'lines';
+    (S.cfg.helplines || []).forEach(function (h) {
+      const li = document.createElement('li'), b = document.createElement('b'), s = document.createElement('span');
+      b.textContent = h.name; s.textContent = h.detail; li.appendChild(b); li.appendChild(s); ul.appendChild(li);
+    });
+    return ul;
+  }
+
+  /* Resolves true when a request is sent, false when the student chooses not to. */
+  function referralCard(opts) {
+    opts = opts || {};
+    return new Promise(function (resolve) {
+      const card = document.createElement('div'); card.className = 'card' + (opts.urgent ? ' alert' : '');
+      const h = document.createElement('h2'); h.textContent = 'Speak with ' + contact(); card.appendChild(h);
+      const p = document.createElement('p'); p.textContent = opts.intro || 'Share how to reach you and the team will get in touch.'; card.appendChild(p);
+      if (S.cfg.contactDetails) { const d = document.createElement('p'); d.className = 'small'; d.textContent = S.cfg.contactDetails; card.appendChild(d); }
+
+      const field = function (id, label, type, ph) {
+        const w = document.createElement('div'); w.className = 'field';
+        const l = document.createElement('label'); l.htmlFor = id; l.textContent = label;
+        const i = document.createElement('input'); i.id = id; i.type = type; i.maxLength = 80; i.placeholder = ph || ''; i.autocomplete = 'off';
+        w.appendChild(l); w.appendChild(i); card.appendChild(w); return i;
+      };
+      const uid = 'r' + Math.random().toString(36).slice(2, 7);
+      const name = field(uid + 'n', 'Your name (optional)', 'text', '');
+      const cont = field(uid + 'c', 'Email or phone number', 'text', 'name@example.com or +971...');
+      const tw = document.createElement('div'); tw.className = 'field';
+      const tl = document.createElement('label'); tl.htmlFor = uid + 't'; tl.textContent = 'Best time to reach you';
+      const sel = document.createElement('select'); sel.id = uid + 't';
+      ['Any time', 'Morning', 'Afternoon', 'Evening'].forEach(function (x) { const o = document.createElement('option'); o.textContent = x; sel.appendChild(o); });
+      tw.appendChild(tl); tw.appendChild(sel); card.appendChild(tw);
+      const ag = document.createElement('label'); ag.className = 'agree';
+      const cb = document.createElement('input'); cb.type = 'checkbox';
+      const sp = document.createElement('span'); sp.textContent = 'I agree that the counselling team may contact me using these details.';
+      ag.appendChild(cb); ag.appendChild(sp); card.appendChild(ag);
+      const err = document.createElement('p'); err.className = 'err'; err.setAttribute('role', 'alert'); card.appendChild(err);
+
+      const row = document.createElement('div'); row.className = 'row';
+      const go = document.createElement('button'); go.type = 'button'; go.className = 'btn'; go.textContent = 'Send request';
+      const no = document.createElement('button'); no.type = 'button'; no.className = 'btn ghost'; no.textContent = opts.urgent ? 'Close' : 'Not now';
+      row.appendChild(go); row.appendChild(no); card.appendChild(row);
+
+      function lock(text) { go.disabled = true; no.disabled = true; [name, cont, sel, cb].forEach(function (x) { x.disabled = true; }); if (text) { err.style.color = 'var(--tide)'; err.textContent = text; } }
+      no.onclick = function () { lock(''); err.textContent = ''; resolve(false); };
+      go.onclick = async function () {
+        err.style.color = 'var(--coral)';
+        if (!cont.value.trim()) { err.textContent = 'Please enter an email address or phone number.'; return; }
+        if (!cb.checked) { err.textContent = 'Please tick the box to agree to be contacted.'; return; }
+        go.disabled = true; err.textContent = '';
+        try {
+          const r = await run('submitReferral', {
+            sessionId: S.sessionId, studentId: S.studentId, name: name.value, contact: cont.value, time: sel.value, consent: true,
+            level: S.level, reasons: S.reasons, asq: S.asqResult, phq: S.phqTotal, gad: S.gadTotal,
+            scoreBefore: S.scoreBefore, scoreAfter: S.scoreAfter
+          });
+          S.referred = true;
+          const lv = Math.max(2, S.level);
+          const base = (S.cfg.response && S.cfg.response[lv]) || 'The counselling team will review your request.';
+          lock((r.emailed ? 'Your request has been sent. ' : 'Your request has been saved for the counselling team. Please also contact them directly using the details above. ') + base);
+          resolve(true);
+        } catch (e) { go.disabled = false; err.textContent = friendlyError(e); }
+      };
+      addNode(card);
+    });
+  }
+
+  /* ---------- urgent pathway ---------- */
+  function handleUrgent(reason) {
+    S.level = 4; if (reason && S.reasons.indexOf(reason) < 0) S.reasons.push(reason);
+    S.crisis = true; S.busy = false; Sound.stop(); if (typeof stopTrack === 'function') stopTrack(); clearTray(); setPhase('urgent');
+    addMsg('ai', S.cfg.crisisMessage || 'Please reach out to a support service now.');
+    const card = document.createElement('div'); card.className = 'card alert';
+    const h = document.createElement('h2'); h.textContent = 'Please speak to a person now'; card.appendChild(h);
+    const p = document.createElement('p'); p.textContent = 'This app is not monitored in real time. If you are in danger, call 999 or 998, or go to the nearest hospital emergency department. You do not have to be alone with this.'; card.appendChild(p);
+    card.appendChild(helpList()); addNode(card);
+    referralCard({ urgent: true, intro: 'If you share your contact details, the counselling team is alerted straight away during working hours. Please do not wait for a reply if you are in danger.' });
+    logNow('Urgent pathway shown: ' + (reason || 'risk flagged') + '. Student directed to emergency and support contacts.');
+    newSessionBtn();
+  }
+
+  /* ---------- logging (summary only, never the conversation) ---------- */
+  function logNow(conclusion) {
+    if (S.logged) return; S.logged = true;
+    run('logSession', {
+      sessionId: S.sessionId, studentId: S.studentId, emotion: S.emotion, scoreBefore: S.scoreBefore,
+      rootCause: S.rootCause, exercise: S.exercise ? S.exercise.title : '', media: S.media,
+      scoreAfter: S.scoreAfter, conclusion: conclusion, crisis: S.crisis,
+      asq: S.asqResult, phq: S.phqTotal, gad: S.gadTotal, level: S.level, referral: S.referred
+    }).catch(function () {});
+  }
+
+  /* ---------- help dialog and counsellor link ---------- */
+  function openHelp() {
+    if (!S.cfg) return;
+    $('helpMsg').textContent = S.cfg.crisisMessage || 'Support is available.';
+    const old = $('helpLines'); const fresh = helpList(); fresh.id = 'helpLines'; old.replaceWith(fresh);
+    $('helpRefer').hidden = !S.sessionId;
+    $('help').showModal();
+  }
+  function openReferral() {
+    if (S.referred) { addMsg('sys', 'Your request has already been sent.'); return; }
+    referralCard({ intro: 'You can ask for contact at any time. Sharing your contact details is your choice.' });
+  }
+  $('soundBtn').onclick = openSoundPanel;
+  $('techniqueBtn').onclick = openTechniqueMenu;
+  $('urgentBtn').onclick = openHelp;
+  $('helpClose').onclick = function () { $('help').close(); };
+  $('helpRefer').onclick = function () { $('help').close(); openReferral(); };
+  $('counsellorBtn').onclick = openReferral;
+
+  /* ---------- init ---------- */
+  renderTrack(); syncVoiceBtn();
+  run('getBootstrap').then(function (cfg) {
+    S.cfg = cfg;
+    const ul = $('consentList'); ul.innerHTML = '';
+    (cfg.consentPoints.length ? cfg.consentPoints : [cfg.disclaimer]).forEach(function (t) {
+      if (!t) return; const li = document.createElement('li'); li.textContent = t; ul.appendChild(li);
+    });
+    syncStart();
+  }).catch(function () {
+    $('consentList').innerHTML = '<li>' + (IN_GAS || API_URL ? 'The app could not load its settings. Please refresh the page.' : 'This page needs API_URL to be set to your Apps Script web app address.') + '</li>';
+  });
+})();
+</script>
+</body>
+</html>
