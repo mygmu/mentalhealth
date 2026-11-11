@@ -93,6 +93,11 @@ audio{width:100%}
 #welcome h2{font:500 1.9rem/1.2 'Newsreader',Georgia,serif;margin:6px 0 10px}
 #welcome p{max-width:62ch}
 .consent{max-width:62ch;margin:12px 0;padding-left:20px}
+.intake{border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;max-width:460px}
+.intake legend{font-weight:600;padding:0 6px}
+.choice{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
+.choice input{margin-top:4px;width:18px;height:18px;accent-color:var(--lagoon);flex:none}
+#detailFields{margin-top:6px;padding-top:8px;border-top:1px solid var(--line)}
 .consent li{margin-bottom:6px}
 .field{display:grid;gap:4px;margin:14px 0;max-width:360px}
 .card .field{max-width:none}
@@ -150,13 +155,20 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
 
   <main>
     <section id="welcome">
-      <h2>First-line support, one step at a time.</h2>
-      <p>I will start with a few safety questions, then listen, then ask some brief standard questions that counsellors use. After that we will practise a calming skill together. If you need a person, I will help you reach one.</p>
+      <h2>A calm, private space to talk.</h2>
+      <p>I am here to listen and to help with whatever is on your mind, from exams and studies to family, friendships or just a hard day. You can stay completely anonymous, or share your details so the counsellor can follow up. Whenever you need a person, I will help you reach one.</p>
       <ul class="consent" id="consentList"></ul>
-      <div class="field">
-        <label for="sid">Student ID (optional)</label>
-        <input id="sid" maxlength="20" autocomplete="off" placeholder="Leave blank to stay anonymous">
-      </div>
+      <fieldset class="intake">
+        <legend>How would you like to continue?</legend>
+        <label class="choice"><input type="radio" name="idmode" id="modeAnon" value="anon" checked><span><strong>Continue anonymously.</strong> I will not share my name. My privacy is kept.</span></label>
+        <label class="choice"><input type="radio" name="idmode" id="modeShare" value="share"><span><strong>Share my details.</strong> So the counsellor can follow up if needed.</span></label>
+        <div id="detailFields" hidden>
+          <div class="field"><label for="sname">Name</label><input id="sname" maxlength="60" autocomplete="off" placeholder="Your name"></div>
+          <div class="field"><label for="sid">Student ID</label><input id="sid" maxlength="20" autocomplete="off" placeholder="Your student ID"></div>
+          <div class="field"><label for="sprog">Programme and year (optional)</label><input id="sprog" maxlength="60" autocomplete="off" placeholder="e.g. MBBS, Year 2"></div>
+          <div class="field"><label for="scontact">Email or phone (optional)</label><input id="scontact" maxlength="80" autocomplete="off" placeholder="So the counsellor can reach you"></div>
+        </div>
+      </fieldset>
       <label class="agree"><input type="checkbox" id="age"><span>I am 18 years old or older.</span></label>
       <label class="agree"><input type="checkbox" id="agree"><span>I have read the information above and I agree to take part.</span></label>
       <button class="btn" id="startBtn" type="button" disabled>Begin</button>
@@ -175,6 +187,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     </form>
     <div class="tools" id="relaxBar">
       <button type="button" class="chip" id="soundBtn">Relax with sound</button>
+      <button type="button" class="chip" id="musicBtn">Find calming music</button>
       <button type="button" class="chip" id="techniqueBtn">Try a calming technique</button>
     </div>
     <div class="tools">
@@ -241,11 +254,12 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     asq: {}, asqResult: 'negative', risk: '', level: 1, reasons: [], phqTotal: null, gadTotal: null,
     scoreBefore: null, scoreAfter: null, emotion: '', rootCause: '', symptom: 'General',
     exerciseKey: '', exercise: null, media: '', crisis: false, logged: false, referred: false,
-    favSound: '', checkinOffered: false, checkinDone: false
+    favSound: '', favMusic: '', checkinOffered: false, checkinDone: false,
+    anonymous: true, studentName: '', studentProgram: '', studentContact: ''
   };
 
   // When this page is hosted outside Apps Script (needed for microphone access), paste your web app /exec URL here.
-  const API_URL = 'https://script.google.com/macros/s/AKfycbyIytFe9f6V4y0GM0LuSsEgD1rNZp2mQHNuVQ0WbpahOM8L7mlQghrl_DUQyPjBHMd3/exec';
+  const API_URL = '';
   const IN_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 
   function run(fn) {
@@ -448,9 +462,19 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
   /* ---------- welcome and consent ---------- */
   function syncStart() { $('startBtn').disabled = !($('agree').checked && $('age').checked && S.cfg); }
   $('agree').onchange = syncStart; $('age').onchange = syncStart;
+  function syncIdMode() { $('detailFields').hidden = !$('modeShare').checked; }
+  $('modeAnon').onchange = syncIdMode; $('modeShare').onchange = syncIdMode;
   $('startBtn').onclick = function () {
     S.sessionId = 'S' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-    S.studentId = $('sid').value.replace(/[^A-Za-z0-9\-]/g, '').slice(0, 20);
+    if ($('modeShare').checked) {
+      S.anonymous = false;
+      S.studentId = $('sid').value.replace(/[^A-Za-z0-9\-]/g, '').slice(0, 20);
+      S.studentName = $('sname').value.trim().slice(0, 60);
+      S.studentProgram = $('sprog').value.trim().slice(0, 60);
+      S.studentContact = $('scontact').value.trim().slice(0, 80);
+    } else {
+      S.anonymous = true; S.studentId = ''; S.studentName = ''; S.studentProgram = ''; S.studentContact = '';
+    }
     $('welcome').hidden = true; $('chat').hidden = false; $('foot').hidden = false;
     startSupport();
   };
@@ -543,7 +567,12 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
         if (r.symptom) S.symptom = r.symptom;
         if (r.exerciseKey) S.exerciseKey = r.exerciseKey;
         if (S.phase === 'listen' && r.ready) setTimeout(screening, 1100);
-        else if (S.phase === 'support' && r.offerCheckin && !S.checkinOffered && !S.checkinDone) setTimeout(offerCheckin, 1100);
+        else if (S.phase === 'support') {
+          if (r.suggest === 'sound') setTimeout(openSoundPanel, 900);
+          else if (r.suggest === 'music') setTimeout(openMusicPanel, 900);
+          else if (r.suggest === 'technique') setTimeout(openTechniqueMenu, 900);
+          else if (r.offerCheckin && !S.checkinOffered && !S.checkinDone) setTimeout(offerCheckin, 1100);
+        }
       }
     } catch (e) {
       dots.remove(); addMsg('sys', friendlyError(e));
@@ -863,6 +892,46 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     const card = document.createElement('div'); card.className = 'card';
     card.appendChild(soundRow()); addNode(card);
   }
+  /* Music the student chooses. Curated tracks from the sheet play in-app; a named taste opens a YouTube search. */
+  function openMusicPanel() {
+    if (['support', 'talk'].indexOf(S.phase) < 0) return;
+    addMsg('ai', 'Music can be a lovely way to settle. What kind do you enjoy when you want to relax? Pick one, or tell me your own below.');
+    const card = document.createElement('div'); card.className = 'card';
+    const curated = (S.cfg.media || []).filter(function (m) { return /music|lofi|lo-fi|playlist|song|recitation|instrumental|piano/i.test(m.tag + ' ' + m.title + ' ' + m.type); });
+    if (curated.length) {
+      const h4 = document.createElement('p'); h4.className = 'small'; h4.textContent = 'From the counselling team:'; card.appendChild(h4);
+      const r1 = document.createElement('div'); r1.className = 'srow';
+      curated.forEach(function (m) {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = m.title;
+        b.onclick = function () { Sound.stop(); if (typeof stopTrack === 'function') stopTrack(); playTrack(m); addMsg('sys', 'Now playing: ' + m.title); };
+        r1.appendChild(b);
+      });
+      card.appendChild(r1);
+    }
+    const p = document.createElement('p'); p.className = 'small'; p.style.marginTop = '10px'; p.textContent = 'Or choose a style to find on YouTube:'; card.appendChild(p);
+    const row = document.createElement('div'); row.className = 'srow';
+    const styles = ['Lo-fi beats', 'Calm piano', 'Nature sounds', 'Soft instrumental', 'Spiritual / recitation', 'Classical'];
+    styles.forEach(function (st) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = st;
+      b.onclick = function () { openMusicSearch(st); };
+      row.appendChild(b);
+    });
+    card.appendChild(row);
+    const field = document.createElement('div'); field.className = 'field'; field.style.marginTop = '12px';
+    const inp = document.createElement('input'); inp.type = 'text'; inp.maxLength = 60; inp.placeholder = 'Type a singer, song or style';
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn ghost'; btn.textContent = 'Find it on YouTube';
+    btn.onclick = function () { const v = inp.value.trim(); if (v) openMusicSearch(v); };
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); btn.click(); } });
+    field.appendChild(inp); field.appendChild(btn); card.appendChild(field);
+    addNode(card);
+  }
+  function openMusicSearch(style) {
+    S.favMusic = style;
+    const q = encodeURIComponent(style + ' relaxing music to calm anxiety');
+    window.open('https://www.youtube.com/results?search_query=' + q, '_blank', 'noopener');
+    addMsg('sys', 'Opening calming ' + style.toLowerCase() + ' on YouTube in a new tab. Let it play softly while we talk.');
+  }
+
   function openTechniqueMenu() {
     if (['support', 'talk'].indexOf(S.phase) < 0) return;
     const list = S.cfg.exercises || [];
@@ -1015,6 +1084,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       const uid = 'r' + Math.random().toString(36).slice(2, 7);
       const name = field(uid + 'n', 'Your name (optional)', 'text', '');
       const cont = field(uid + 'c', 'Email or phone number', 'text', 'name@example.com or +971...');
+      if (!S.anonymous) { if (S.studentName) name.value = S.studentName; if (S.studentContact) cont.value = S.studentContact; }
       const tw = document.createElement('div'); tw.className = 'field';
       const tl = document.createElement('label'); tl.htmlFor = uid + 't'; tl.textContent = 'Best time to reach you';
       const sel = document.createElement('select'); sel.id = uid + 't';
@@ -1076,7 +1146,8 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       sessionId: S.sessionId, studentId: S.studentId, emotion: S.emotion, scoreBefore: S.scoreBefore,
       rootCause: S.rootCause, exercise: S.exercise ? S.exercise.title : '', media: S.media,
       scoreAfter: S.scoreAfter, conclusion: conclusion, crisis: S.crisis,
-      asq: S.asqResult, phq: S.phqTotal, gad: S.gadTotal, level: S.level, referral: S.referred
+      asq: S.asqResult, phq: S.phqTotal, gad: S.gadTotal, level: S.level, referral: S.referred,
+      studentName: S.studentName, studentContact: S.studentContact
     }).catch(function () {});
   }
 
@@ -1093,6 +1164,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     referralCard({ intro: 'You can ask for contact at any time. Sharing your contact details is your choice.' });
   }
   $('soundBtn').onclick = openSoundPanel;
+  $('musicBtn').onclick = openMusicPanel;
   $('techniqueBtn').onclick = openTechniqueMenu;
   $('urgentBtn').onclick = openHelp;
   $('helpClose').onclick = function () { $('help').close(); };
