@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calm Room — Counsellor Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{--mist:#E8F0F1;--paper:#F8FBFB;--tide:#17353F;--lagoon:#2E7F86;--glass:#A9D3CF;--sand:#E6CFA9;--coral:#B5483D;--amber:#BA7517;--green:#0F6E56;--line:#C9DADC;--muted:#4F676E}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--mist);color:var(--tide);font:400 15px/1.55 'Figtree',system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--lagoon);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:18px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+h1{font:500 1.5rem/1.1 'Newsreader',Georgia,serif;margin:0}
+header p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
+.btn{background:var(--tide);color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--lagoon)}
+.btn.ghost{background:none;color:var(--tide);border:1.5px solid var(--tide)}
+.btn:disabled{opacity:.5;cursor:default}
+.logout{margin-left:auto}
+
+/* login */
+#login{max-width:400px;margin:8vh auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px}
+#login h1{margin-bottom:6px}
+#login p{color:var(--muted);margin:0 0 16px}
+.field{display:grid;gap:5px;margin-bottom:14px}
+.field label{font-weight:600;font-size:.9rem}
+input,select,textarea{border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;width:100%}
+textarea{resize:vertical;min-height:52px}
+.err{color:var(--coral);min-height:1.2em;font-size:.88rem;margin:4px 0 0}
+
+/* tabs */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;font-weight:600;color:var(--muted);cursor:pointer}
+.tab.on{color:var(--tide);border-color:var(--tide)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat .n{font:500 1.7rem 'Newsreader',Georgia,serif;display:block}
+.stat .l{color:var(--muted);font-size:.82rem}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px 0;overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#EEF4F5;position:sticky;top:0;font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.p-URGENT{background:#FAE4E0;color:var(--coral)}
+.p-HIGH{background:#FAEEDA;color:var(--amber)}
+.p-ROUTINE,.p-ON\ REQUEST{background:#E1F0EE;color:var(--lagoon)}
+.lvl4{color:var(--coral);font-weight:700}.lvl3{color:var(--amber);font-weight:700}.lvl2{color:var(--lagoon);font-weight:600}.lvl1{color:var(--muted)}
+.yes{color:var(--coral);font-weight:700}
+select.status,input.notes{padding:5px 7px;font-size:.85rem}
+input.notes{min-width:150px}
+.rowbtn{padding:5px 10px;font-size:.82rem}
+.muted{color:var(--muted)}
+.range{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+.range .field{margin:0}
+.bars{display:grid;gap:6px;margin-top:6px}
+.bar{display:grid;grid-template-columns:120px 1fr 40px;gap:8px;align-items:center;font-size:.84rem}
+.bar .track{background:var(--mist);border-radius:6px;height:16px;overflow:hidden}
+.bar .fill{background:var(--lagoon);height:100%}
+.note{background:#FAEEDA;border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:10px 14px;margin:0 0 14px;font-size:.88rem}
+.loading{color:var(--muted);padding:20px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section id="login">
+    <h1>Counsellor Dashboard</h1>
+    <p>Calm Room — please enter the dashboard passcode.</p>
+    <div class="field">
+      <label for="code">Passcode</label>
+      <input id="code" type="password" autocomplete="off">
+    </div>
+    <button class="btn" id="loginBtn" type="button">Open dashboard</button>
+    <p class="err" id="loginErr" role="alert"></p>
+  </section>
+
+  <main id="app" hidden>
+    <header>
+      <div><h1>Counsellor Dashboard</h1><p id="sub">Calm Room</p></div>
+      <button class="btn ghost logout" id="logoutBtn" type="button">Lock</button>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button class="tab on" id="tabReferrals" type="button">Referrals</button>
+      <button class="tab" id="tabSessions" type="button">Case records</button>
+      <button class="tab" id="tabReports" type="button">Reports</button>
+    </div>
+
+    <section id="viewReferrals">
+      <div class="note">Contact details are private. Share this screen only with authorised counselling staff.</div>
+      <div id="referralsBody" class="loading">Loading…</div>
+    </section>
+
+    <section id="viewSessions" hidden>
+      <p class="muted" style="margin-top:0">Session summaries only. The conversation itself is never stored. Anonymous sessions show no name.</p>
+      <div id="sessionsBody" class="loading">Loading…</div>
+    </section>
+
+    <section id="viewReports" hidden>
+      <div class="range">
+        <div class="field"><label for="from">From</label><input id="from" type="date"></div>
+        <div class="field"><label for="to">To</label><input id="to" type="date"></div>
+        <button class="btn" id="runReport" type="button">Generate</button>
+        <button class="btn ghost" id="downloadCsv" type="button" disabled>Download CSV</button>
+      </div>
+      <div id="reportBody" class="loading">Choose a date range and generate a report.</div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  const $ = function (id) { return document.getElementById(id); };
+  const S = { code: '', data: null, csv: '' };
+
+  function run(fn) {
+    const args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (ok, no) {
+      google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn].apply(null, args);
+    });
+  }
+  function esc(v) { const d = document.createElement('div'); d.textContent = v == null ? '' : String(v); return d.innerHTML; }
+  function fmtDate(v) { if (!v) return ''; const d = new Date(v); return isNaN(d) ? String(v) : d.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+
+  /* ---------- login ---------- */
+  $('loginBtn').onclick = login;
+  $('code').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+  function login() {
+    const code = $('code').value;
+    if (!code) { $('loginErr').textContent = 'Please enter the passcode.'; return; }
+    $('loginBtn').disabled = true; $('loginErr').textContent = '';
+    run('dashAuth', code).then(function () {
+      S.code = code; $('login').hidden = true; $('app').hidden = false; $('code').value = '';
+      loadAll();
+    }).catch(function (e) {
+      $('loginBtn').disabled = false;
+      $('loginErr').textContent = (e && e.message ? e.message.replace(/^Error:\s*/, '') : 'Could not sign in.');
+    });
+  }
+  $('logoutBtn').onclick = function () { S.code = ''; S.data = null; $('app').hidden = true; $('login').hidden = false; $('loginBtn').disabled = false; };
+
+  /* ---------- tabs ---------- */
+  const tabs = [['tabReferrals', 'viewReferrals'], ['tabSessions', 'viewSessions'], ['tabReports', 'viewReports']];
+  tabs.forEach(function (t) {
+    $(t[0]).onclick = function () {
+      tabs.forEach(function (x) { $(x[0]).classList.toggle('on', x[0] === t[0]); $(x[1]).hidden = x[1] !== t[1]; });
+    };
+  });
+
+  /* ---------- load referrals + sessions ---------- */
+  function loadAll() {
+    $('referralsBody').textContent = 'Loading…'; $('sessionsBody').textContent = 'Loading…';
+    run('dashLoad', S.code, 300).then(function (d) {
+      S.data = d; if (d.contactName) $('sub').textContent = 'Calm Room — ' + d.contactName;
+      renderReferrals(d.referrals || []); renderSessions(d.sessions || []);
+    }).catch(function (e) { $('referralsBody').textContent = (e && e.message) || 'Could not load data.'; });
+  }
+
+  const STATUSES = ['NEW', 'CONTACTED', 'APPOINTMENT BOOKED', 'CLOSED', 'UNREACHABLE'];
+  function renderReferrals(rows) {
+    if (!rows.length) { $('referralsBody').innerHTML = '<p class="muted" style="padding:16px">No referral requests yet.</p>'; return; }
+    let html = '<div class="panel"><table><thead><tr>' +
+      '<th>When</th><th>Priority</th><th>Level</th><th>Name</th><th>Contact</th><th>Preferred</th><th>Reasons</th><th>Status</th><th>Notes</th><th></th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (r, i) {
+      const pr = (r.Priority || 'ROUTINE');
+      html += '<tr data-session="' + esc(r.Session_ID) + '">' +
+        '<td>' + esc(fmtDate(r.Timestamp)) + '</td>' +
+        '<td><span class="pill p-' + esc(pr) + '">' + esc(pr) + '</span></td>' +
+        '<td class="lvl' + esc(r.Triage_Level) + '">' + esc(r.Triage_Level) + '</td>' +
+        '<td>' + esc(r.Name || '—') + '</td>' +
+        '<td>' + esc(r.Contact || '') + '</td>' +
+        '<td>' + esc(r.Preferred_Time || 'Any') + '</td>' +
+        '<td>' + esc(r.Reasons || '') + '</td>' +
+        '<td><select class="status" data-i="' + i + '">' + STATUSES.map(function (s) {
+          return '<option' + ((r.Status || 'NEW') === s ? ' selected' : '') + '>' + s + '</option>';
+        }).join('') + '</select></td>' +
+        '<td><input class="notes" data-i="' + i + '" value="' + esc(r.Follow_Up_Notes || '') + '" placeholder="Follow-up notes"></td>' +
+        '<td><button class="btn rowbtn" data-i="' + i + '" type="button">Save</button></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    $('referralsBody').innerHTML = html;
+    $('referralsBody').querySelectorAll('button.rowbtn').forEach(function (b) {
+      b.onclick = function () {
+        const i = b.getAttribute('data-i'), tr = b.closest('tr');
+        const status = $('referralsBody').querySelector('select.status[data-i="' + i + '"]').value;
+        const notes = $('referralsBody').querySelector('input.notes[data-i="' + i + '"]').value;
+        b.disabled = true; b.textContent = 'Saving…';
+        run('dashUpdateReferral', S.code, { sessionId: tr.getAttribute('data-session'), status: status, notes: notes })
+          .then(function () { b.textContent = 'Saved'; setTimeout(function () { b.disabled = false; b.textContent = 'Save'; }, 1200); })
+          .catch(function (e) { b.disabled = false; b.textContent = 'Retry'; alert((e && e.message) || 'Could not save.'); });
+      };
+    });
+  }
+
+  function renderSessions(rows) {
+    if (!rows.length) { $('sessionsBody').innerHTML = '<p class="muted" style="padding:16px">No sessions recorded yet.</p>'; return; }
+    let html = '<div class="panel"><table><thead><tr>' +
+      '<th>When</th><th>Student</th><th>Level</th><th>Stress<br>before→after</th><th>Main concern</th><th>Exercise</th><th>Referral</th><th>Crisis</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (s) {
+      const before = s.Stress_Score_Before || '–', after = s.Stress_Score_After || '–';
+      const who = s.Student_Name ? esc(s.Student_Name) : (s.Student_ID && s.Student_ID !== 'Anonymous' ? esc(s.Student_ID) : '<span class="muted">Anonymous</span>');
+      html += '<tr>' +
+        '<td>' + esc(fmtDate(s.Timestamp)) + '</td>' +
+        '<td>' + who + '</td>' +
+        '<td class="lvl' + esc(s.Triage_Level) + '">' + esc(s.Triage_Level || '') + '</td>' +
+        '<td>' + esc(before) + ' → ' + esc(after) + '</td>' +
+        '<td>' + esc(s.Root_Cause_Summary || '') + '</td>' +
+        '<td>' + esc(s.Exercise_Completed || '') + '</td>' +
+        '<td>' + (String(s.Referral_Requested).toUpperCase() === 'YES' ? 'Yes' : '') + '</td>' +
+        '<td>' + (String(s.Crisis_Flag).toUpperCase() === 'YES' ? '<span class="yes">YES</span>' : '') + '</td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    $('sessionsBody').innerHTML = html;
+  }
+
+  /* ---------- reports ---------- */
+  (function initDates() {
+    const to = new Date(), from = new Date(); from.setDate(from.getDate() - 30);
+    $('to').value = to.toISOString().slice(0, 10);
+    $('from').value = from.toISOString().slice(0, 10);
+  })();
+  $('runReport').onclick = function () {
+    $('reportBody').textContent = 'Generating…'; $('downloadCsv').disabled = true;
+    run('dashReport', S.code, $('from').value, $('to').value).then(function (d) {
+      S.csv = d.csv || ''; $('downloadCsv').disabled = !S.csv;
+      renderReport(d.report, d.count);
+    }).catch(function (e) { $('reportBody').textContent = (e && e.message) || 'Could not build the report.'; });
+  };
+  function bar(label, value, max) {
+    const pct = max ? Math.round(value / max * 100) : 0;
+    return '<div class="bar"><span>' + esc(label) + '</span><span class="track"><span class="fill" style="width:' + pct + '%"></span></span><span>' + value + '</span></div>';
+  }
+  function renderReport(r, count) {
+    if (!r || !count) { $('reportBody').innerHTML = '<p class="muted">No sessions in this period.</p>'; return; }
+    const levelNames = { 1: 'Level 1 mild', 2: 'Level 2 moderate', 3: 'Level 3 priority', 4: 'Level 4 urgent' };
+    const maxLvl = Math.max(1, r.byLevel[1], r.byLevel[2], r.byLevel[3], r.byLevel[4]);
+    const syms = Object.keys(r.bySymptom).sort(function (a, b) { return r.bySymptom[b] - r.bySymptom[a]; }).slice(0, 8);
+    const maxSym = syms.length ? r.bySymptom[syms[0]] : 1;
+    let html = '<div class="cards">' +
+      '<div class="stat"><span class="n">' + r.totalSessions + '</span><span class="l">Sessions</span></div>' +
+      '<div class="stat"><span class="n">' + (r.avgBefore == null ? '–' : r.avgBefore) + '</span><span class="l">Avg stress before</span></div>' +
+      '<div class="stat"><span class="n">' + (r.avgAfter == null ? '–' : r.avgAfter) + '</span><span class="l">Avg stress after</span></div>' +
+      '<div class="stat"><span class="n">' + (r.avgDrop == null ? '–' : r.avgDrop) + '</span><span class="l">Avg reduction</span></div>' +
+      '<div class="stat"><span class="n">' + r.referralsRequested + '</span><span class="l">Referrals requested</span></div>' +
+      '<div class="stat"><span class="n">' + r.crisisCount + '</span><span class="l">Crisis flags</span></div>' +
+      '</div>';
+    html += '<div class="panel" style="padding:16px"><strong>By triage level</strong><div class="bars">';
+    [1, 2, 3, 4].forEach(function (l) { html += bar(levelNames[l], r.byLevel[l], maxLvl); });
+    html += '</div></div>';
+    html += '<div class="panel" style="padding:16px;margin-top:14px"><strong>Most common presenting feelings</strong><div class="bars">';
+    syms.forEach(function (s) { html += bar(s, r.bySymptom[s], maxSym); });
+    html += '</div></div>';
+    const st = r.referralsByStatus || {};
+    const stKeys = Object.keys(st);
+    if (stKeys.length) {
+      html += '<div class="panel" style="padding:16px;margin-top:14px"><strong>Referral queue by status (all time)</strong><div class="bars">';
+      const maxSt = Math.max.apply(null, stKeys.map(function (k) { return st[k]; }));
+      stKeys.forEach(function (k) { html += bar(k, st[k], maxSt); });
+      html += '</div></div>';
+    }
+    $('reportBody').innerHTML = html;
+  }
+  $('downloadCsv').onclick = function () {
+    if (!S.csv) return;
+    const blob = new Blob([S.csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'calm-room-report-' + $('from').value + '-to-' + $('to').value + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  };
+})();
+</script>
+</body>
+</html>
