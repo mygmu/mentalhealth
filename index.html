@@ -183,8 +183,12 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
 
 /* 3D human guide */
 .stage3d{position:relative;height:300px;margin:8px 0 10px;border-radius:16px;overflow:hidden;background:linear-gradient(#E6F4EF,#F8F3E8);touch-action:pan-y;cursor:grab;background-size:cover;background-position:center}
-.stage3d.compact{height:230px;margin:0 0 8px}
-#companion{position:sticky;top:0;z-index:5;margin:0 0 6px}
+.stage3d.compact{height:100%;margin:0;background:none!important;border-radius:0;box-shadow:none;border:0}
+.stage3d.compact .hint3d,.stage3d.compact .cap3d,.stage3d.compact .hear3d{display:none}
+#companion{position:fixed;right:10px;bottom:108px;width:132px;height:172px;z-index:30;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(23,53,63,.28))}
+#companion[hidden]{display:none}
+#companion .cx{position:absolute;top:-6px;right:-4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(23,53,63,.75);color:#fff;font-size:14px;line-height:1;cursor:pointer;pointer-events:auto}
+@media(max-width:520px){#companion{width:104px;height:136px;bottom:116px;right:6px}}
 .hear3d{position:absolute;right:10px;bottom:8px;background:rgba(255,255,255,.92);border:1.5px solid #17353F;color:#17353F;border-radius:999px;padding:6px 12px;font-weight:600;font-size:.82rem;cursor:pointer}
 .stage3d.sky{background:linear-gradient(#BFE3F5,#EAF6F1 70%)}
 .stage3d.frozen{cursor:default}
@@ -266,6 +270,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       <label class="lang"><span class="sr">Voice language</span>
         <select id="lang"><option value="en-US">English</option><option value="ar-AE">العربية</option><option value="ml-IN">മലയാളം</option><option value="hi-IN">हिन्दी</option></select></label>
       <button type="button" class="link" id="voice" aria-pressed="false">Voice mode: Off</button>
+      <button type="button" class="link" id="natural" aria-pressed="false" hidden>Natural voice: Off (faster)</button>
     </div>
   </footer>
   <nav id="nav" aria-label="Main" hidden>
@@ -434,7 +439,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
 
   /* ---------- voice: free browser speech, no key and no usage limit ---------- */
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const Voice = { lang: 'en-US', rec: null, listening: false, speaking: false, token: 0 };
+  const Voice = { lang: 'en-US', rec: null, listening: false, speaking: false, token: 0, natural: (function () { try { return localStorage.getItem('cr_natural') === '1'; } catch (e) { return false; } })() };
   function langName() { const o = $('lang').options[$('lang').selectedIndex]; return o ? o.text : Voice.lang; }
   function setNote(text, href) {
     const n = $('micNote'); n.textContent = text || '';
@@ -545,7 +550,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       afterSpeech();
     };
     const fallback = function () { Aud.src = null; browserSpeak(clean, my, em, finish); levelLoop(); };
-    if (S.cfg && S.cfg.ttsOn && Date.now() > Aud.down && audCtx()) {
+    if (S.cfg && S.cfg.ttsOn && Voice.natural && Date.now() > Aud.down && audCtx()) {
       const chunks = chunkText(clean, 240), P = [];
       const getP = function (j) { if (j < chunks.length && !P[j]) P[j] = ttsFetch(chunks[j], em); return P[j]; };
       const play = function (j) {
@@ -572,12 +577,15 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
   }
 
   /* The on-screen guide for the chat: appears in voice mode, listens, speaks with expression. */
-  const Companion = { api: null };
+  const Companion = { api: null, closed: false };
   function syncCompanion() {
     const slot = $('companion'); if (!slot) return;
     const show = S.voiceOn && !$('chat').hidden;
-    if (show && !Companion.api) { Companion.api = stage3d('companion', null, null, { compact: true, noButton: true }); slot.appendChild(Companion.api.el); }
-    slot.hidden = !show;
+    if (show && !Companion.api) { Companion.api = stage3d('companion', null, null, { compact: true, noButton: true }); slot.appendChild(Companion.api.el);
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'cx'; x.setAttribute('aria-label', 'Hide the guide'); x.textContent = '\u00d7';
+      x.onclick = function () { Companion.closed = true; slot.hidden = true; }; slot.appendChild(x); }
+    slot.hidden = !show || !!Companion.closed;
+    const ft = $('foot'); if (ft && !ft.hidden) slot.style.bottom = (ft.offsetHeight + 6) + 'px';
   }
 
   /* In voice mode the student's turn starts automatically once the reply has been spoken. */
@@ -615,6 +623,8 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') blockedMic();
       else if (e.error === 'no-speech') setNote('I did not hear anything. Tap the microphone when you are ready.');
       else if (e.error === 'language-not-supported') setNote('This browser cannot listen in ' + langName() + '. Please type instead.');
+      else if (e.error === 'network') setNote('Voice input needs an internet connection. You can type instead.');
+      else if (e.error === 'audio-capture') setNote('No microphone was found. You can type instead.');
       else if (e.error !== 'aborted') setNote('Voice input stopped. You can type instead.');
     };
     r.onend = function () {
@@ -628,15 +638,31 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     try { r.start(); } catch (e) { Voice.listening = false; Voice.rec = null; }
   }
 
-  $('mic').onclick = function () { if (Voice.listening && Voice.rec) { Voice.rec.stop(); return; } startListening(); };
+  let micOk = false;
+  $('mic').onclick = function () {
+    if (Voice.listening && Voice.rec) { Voice.rec.stop(); return; }
+    if (micOk || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { startListening(); return; }
+    setNote('Please allow the microphone when your browser asks.');
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+      st.getTracks().forEach(function (t) { t.stop(); }); micOk = true; setNote(''); startListening();
+    }).catch(function (e) {
+      if (e && (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError')) setNote('No microphone was found on this device. You can type instead.');
+      else blockedMic();
+    });
+  };
   $('voice').onclick = function () {
-    S.voiceOn = !S.voiceOn; syncVoiceBtn(); syncCompanion();
+    S.voiceOn = !S.voiceOn; syncVoiceBtn(); if (S.voiceOn) Companion.closed = false; syncCompanion();
     if (!S.voiceOn) { stopSpeaking(); if (Voice.rec) Voice.rec.stop(); setNote(''); return; }
     if (!SR) setNote('This browser can read replies aloud, but voice input needs Chrome, Edge or Safari.');
     else afterSpeech();
   };
+  function syncNatural() { const b = $('natural'); b.hidden = !(S.cfg && S.cfg.ttsOn); b.setAttribute('aria-pressed', String(Voice.natural)); b.textContent = Voice.natural ? 'Natural voice: On (slower)' : 'Natural voice: Off (faster)'; }
+  $('natural').onclick = function () { Voice.natural = !Voice.natural; try { localStorage.setItem('cr_natural', Voice.natural ? '1' : '0'); } catch (e) {} syncNatural(); };
+  setInterval(syncNatural, 1500);
   $('lang').onchange = function () { Voice.lang = this.value; if (Voice.rec) Voice.rec.stop(); stopSpeaking(); setNote(''); };
   if (!SR) $('mic').hidden = true;
+  else if (IN_GAS) $('mic').addEventListener('click', function () { setNote('The microphone only works on the voice page, not inside this embedded view.', S.cfg && S.cfg.voiceUrl); }, true);
+  window.addEventListener('resize', syncCompanion);
   new MutationObserver(syncCompanion).observe($('chat'), { attributes: true, attributeFilter: ['hidden'] });
 
   /* ---------- welcome and consent ---------- */
@@ -911,8 +937,8 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     el.appendChild(cv);
     const cap = document.createElement('div'); cap.className = 'cap3d'; el.appendChild(cap);
     const hint = document.createElement('div'); hint.className = 'hint3d'; hint.textContent = 'Drag to turn the figure'; el.appendChild(hint);
-    const scene = new T.Scene(), cam = new T.PerspectiveCamera(30, 1.5, 0.1, 30);
-    const CAM = { ground: [0.98, 3.75, 0.9], pmr: [0.98, 3.75, 0.9], breath: [1.0, 2.55, 0.95], butterfly: [1.0, 2.55, 0.95], safe: [0.85, 3.4, 0.72], write: [0.85, 3.3, 0.72], reframe: [1.5, 2.7, 1.42], companion: [1.2, 1.15, 1.1] }[kind];
+    const scene = new T.Scene(), cam = new T.PerspectiveCamera(kind === 'companion' ? 26 : 30, 1.5, 0.1, 30);
+    const CAM = { ground: [0.98, 3.75, 0.9], pmr: [0.98, 3.75, 0.9], breath: [1.0, 2.55, 0.95], butterfly: [1.0, 2.55, 0.95], safe: [0.85, 3.4, 0.72], write: [0.85, 3.3, 0.72], reframe: [1.5, 2.7, 1.42], companion: [1.22, 1.62, 1.04] }[kind];
     cam.position.set(0, CAM[0], CAM[1]); cam.lookAt(0, CAM[2], 0);
     scene.add(new T.HemisphereLight(0xffffff, 0xb9cfcc, 0.95));
     const key = new T.DirectionalLight(0xfff3e6, 0.7); key.position.set(1.6, 3, 2.6); scene.add(key);
@@ -925,7 +951,8 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       for (let i = 1; i < arguments.length; i++) (G[arguments[i]] = G[arguments[i]] || []).push(m);
       return m;
     }
-    const SKIN = 0xDDAE8B, SHIRT = 0x3E8E8A, PANTS = 0x2F4C63, HAIR = 0x2E2A28, SHOE = 0xF4F1EA;
+    const doc = kind === 'companion';
+    const SKIN = 0xDDAE8B, SHIRT = doc ? 0xF4F7F9 : 0x3E8E8A, PANTS = 0x2F4C63, HAIR = doc ? 0x3A2B24 : 0x2E2A28, SHOE = 0xF4F1EA;
     const body = new T.Group(); scene.add(body);
     function add(parent, geo, m) { const o = new T.Mesh(geo, m); parent.add(o); return o; }
     const sph = function (r) { return new T.SphereGeometry(r, 28, 20); };
@@ -968,6 +995,18 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     [-1, 1].forEach(function (s) { const ear = add(head, sph(0.021), skinHead); ear.position.set(s * 0.097, -0.005, 0); ear.scale.z = 0.7; });
     const nose = add(head, sph(0.015), mat(0xD3A482, 'head')); nose.scale.set(0.8, 1.1, 1); nose.position.set(0, -0.022, 0.104);
 
+    if (doc) {
+      [-1, 1].forEach(function (sd) {
+        const side = add(head, sph(0.06), hairM); side.scale.set(0.8, 1.55, 1.0); side.position.set(sd * 0.082, -0.045, -0.012);
+        const lap = add(body, new T.BoxGeometry(0.055, 0.16, 0.012), new T.MeshStandardMaterial({ color: 0xE3E9ED, roughness: 0.7 })); lap.position.set(sd * 0.05, 0.44, 0.119); lap.rotation.z = -sd * 0.38; lap.rotation.x = -0.1;
+      });
+      hairBack.scale.set(1.0, 1.5, 0.9); hairBack.position.set(0, -0.045, -0.03);
+      const vee = add(body, new T.BoxGeometry(0.05, 0.13, 0.006), new T.MeshStandardMaterial({ color: 0x3E8E8A, roughness: 0.7 })); vee.position.set(0, 0.45, 0.113);
+      const stM = new T.MeshStandardMaterial({ color: 0x38444B, roughness: 0.4, metalness: 0.3 });
+      const st = add(body, new T.TorusGeometry(0.085, 0.0065, 8, 28, Math.PI), stM); st.rotation.z = Math.PI; st.position.set(0, 0.55, 0.045); st.scale.set(1, 1.5, 1); st.rotation.x = 0.35;
+      const cp = add(body, new T.CylinderGeometry(0.02, 0.02, 0.01, 18), stM); cp.rotation.x = Math.PI / 2; cp.position.set(0.075, 0.38, 0.133);
+      const pocket = add(body, new T.BoxGeometry(0.06, 0.05, 0.008), new T.MeshStandardMaterial({ color: 0xE3E9ED, roughness: 0.7 })); pocket.position.set(-0.1, 0.2, 0.113);
+    }
     const scleraM = new T.MeshStandardMaterial({ color: 0xF7F4EE, roughness: 0.3 }), irisM = new T.MeshStandardMaterial({ color: 0x5B3B26, roughness: 0.25 });
     const pupilM = new T.MeshBasicMaterial({ color: 0x120C0A }), shineM = new T.MeshBasicMaterial({ color: 0xffffff });
     const eyes = [-1, 1].map(function (s) {
@@ -1030,8 +1069,8 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       const L = {
         s: s, S: V(), E: V(), K: V(), H: V(s * 0.092, -0.05, 0), hT: V(), fT: V(),
         sh: add(body, sph(0.058), mat(SHIRT, 'shoulders')),
-        ua: bone(0.052, 0.043, UA, mat(SHIRT, 'arms')), el: add(body, sph(0.041), mat(SKIN, 'arms')),
-        fa: bone(0.04, 0.031, FA, mat(SKIN, 'arms')),
+        ua: bone(0.052, 0.043, UA, mat(SHIRT, 'arms')), el: add(body, sph(0.041), mat(doc ? SHIRT : SKIN, 'arms')),
+        fa: bone(0.04, 0.031, FA, mat(doc ? SHIRT : SKIN, 'arms')),
         th: bone(0.078, 0.058, TH, mat(PANTS, 'legs')), kn: add(body, sph(0.057), mat(PANTS, 'legs')),
         ca: bone(0.055, 0.04, CA, mat(PANTS, 'legs')), foot: add(body, sph(0.05), mat(SHOE, 'legs')),
         poleA: kind === 'butterfly' ? V(s * 0.5, -1, 0.55) : V(s * 0.45, -0.6, -1), poleL: V(s * 0.12, 0.25, 1),
