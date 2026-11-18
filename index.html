@@ -300,7 +300,7 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
       <label class="lang"><span class="sr">Voice language</span>
         <select id="lang"><option value="en-US">English</option><option value="ar-AE">العربية</option><option value="ml-IN">മലയാളം</option><option value="hi-IN">हिन्दी</option></select></label>
       <button type="button" class="link" id="voice" aria-pressed="false">Voice mode: Off</button>
-      <button type="button" class="link" id="natural" aria-pressed="false" hidden>Natural voice: Off (faster)</button>
+      <button type="button" class="link" id="natural" aria-pressed="false" hidden>Natural voice: On</button>
     </div>
   </footer>
   <nav id="nav" aria-label="Main" hidden>
@@ -374,7 +374,7 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
   };
 
   // When this page is hosted outside Apps Script (needed for microphone access), paste your web app /exec URL here.
-  const API_URL = 'https://script.google.com/macros/s/AKfycbyIytFe9f6V4y0GM0LuSsEgD1rNZp2mQHNuVQ0WbpahOM8L7mlQghrl_DUQyPjBHMd3/exec';
+  const API_URL = '';
   const IN_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 
   function run(fn) {
@@ -469,7 +469,7 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
 
   /* ---------- voice: free browser speech, no key and no usage limit ---------- */
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const Voice = { lang: 'en-US', rec: null, listening: false, speaking: false, token: 0, natural: (function () { try { return localStorage.getItem('cr_natural') === '1'; } catch (e) { return false; } })() };
+  const Voice = { lang: 'en-US', rec: null, listening: false, speaking: false, token: 0, natural: (function () { try { return localStorage.getItem('cr_natural') !== '0'; } catch (e) { return true; } })() };
   function langName() { const o = $('lang').options[$('lang').selectedIndex]; return o ? o.text : Voice.lang; }
   function setNote(text, href) {
     const n = $('micNote'); n.textContent = text || '';
@@ -581,7 +581,8 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
     };
     const fallback = function () { Aud.src = null; browserSpeak(clean, my, em, finish); levelLoop(); };
     if (S.cfg && S.cfg.ttsOn && Voice.natural && Date.now() > Aud.down && audCtx()) {
-      const chunks = chunkText(clean, 240), P = [];
+      const first = (clean.match(/^[^.!?\u061F\u0964]{1,140}[.!?\u061F\u0964]?/) || [clean])[0].trim(), rest = clean.slice(first.length).trim();
+      const chunks = [first].concat(rest ? chunkText(rest, 240) : []), P = [];
       const getP = function (j) { if (j < chunks.length && !P[j]) P[j] = ttsFetch(chunks[j], em); return P[j]; };
       const play = function (j) {
         if (my !== Voice.token) return;
@@ -657,7 +658,7 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
   function afterSpeech() {
     if (!S.voiceOn || !SR || Voice.listening || S.busy || S.crisis) return;
     if (['listen', 'talk', 'support'].indexOf(S.phase) < 0) return;
-    setTimeout(function () { if (S.voiceOn && !Voice.listening && !Voice.speaking && !S.busy) startListening(); }, 600);
+    setTimeout(function () { if (S.voiceOn && !Voice.listening && !Voice.speaking && !S.busy) startListening(); }, 250);
   }
 
   function blockedMic() {
@@ -670,18 +671,22 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
     stopSpeaking();
     const r = new SR(); Voice.rec = r;
     r.lang = Voice.lang; r.interimResults = true; r.continuous = false;
-    let finalText = '', failed = false;
+    let finalText = '', heard = '', failed = false, silence = 0;
     r.onstart = function () {
       Voice.listening = true; $('mic').classList.add('on'); if (Companion.api) Companion.api.listen(true);
       setNote(S.voiceOn ? 'Listening. Speak whenever you are ready.' : 'Listening...');
     };
     r.onresult = function (e) {
-      let interim = '';
+      let interim = '', gotFinal = false;
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const res = e.results[i];
-        if (res.isFinal) finalText += res[0].transcript + ' '; else interim += res[0].transcript;
+        if (res.isFinal) { finalText += res[0].transcript + ' '; gotFinal = true; } else interim += res[0].transcript;
       }
-      $('msg').value = (finalText + interim).trim();
+      heard = (finalText + interim).trim();
+      $('msg').value = heard; if (Companion.full) $('cmpCap').textContent = heard;
+      clearTimeout(silence);
+      if (gotFinal && S.voiceOn) { try { r.stop(); } catch (x) {} }          // send as soon as the browser is sure
+      else if (heard) silence = setTimeout(function () { try { r.stop(); } catch (x) {} }, 850);   // do not wait for a long pause
     };
     r.onerror = function (e) {
       failed = true;
@@ -694,7 +699,8 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
     };
     r.onend = function () {
       Voice.listening = false; Voice.rec = null; $('mic').classList.remove('on'); if (Companion.api) Companion.api.listen(false);
-      const t = finalText.trim();
+      clearTimeout(silence);
+      const t = (finalText.trim() || heard);
       if (t) {
         setNote('');
         if (S.voiceOn) { $('msg').value = ''; send(t); } else $('msg').focus();
@@ -721,7 +727,7 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
     if (!SR) setNote('This browser can read replies aloud, but voice input needs Chrome, Edge or Safari.');
     else afterSpeech();
   };
-  function syncNatural() { const b = $('natural'); b.hidden = !(S.cfg && S.cfg.ttsOn); b.setAttribute('aria-pressed', String(Voice.natural)); b.textContent = Voice.natural ? 'Natural voice: On (slower)' : 'Natural voice: Off (faster)'; }
+  function syncNatural() { const b = $('natural'); b.hidden = !(S.cfg && S.cfg.ttsOn); b.setAttribute('aria-pressed', String(Voice.natural)); b.textContent = Voice.natural ? 'Natural voice: On' : 'Natural voice: Off (instant)'; }
   $('natural').onclick = function () { Voice.natural = !Voice.natural; try { localStorage.setItem('cr_natural', Voice.natural ? '1' : '0'); } catch (e) {} syncNatural(); };
   setInterval(syncNatural, 1500);
   $('lang').onchange = function () { Voice.lang = this.value; if (Voice.rec) Voice.rec.stop(); stopSpeaking(); setNote(''); };
@@ -816,11 +822,45 @@ body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
   }
 
   /* ---------- step 2: listen (AI conversation) ---------- */
+  /* Spoken or typed requests that the app can do at once, without waiting for the AI: play a sound, stop it, start a technique. */
+  function say(t) { addMsg('ai', t); S.history.push({ role: 'model', text: t }); }
+  function localCommand(text) {
+    const t = text.toLowerCase();
+    if (/\b(stop|pause|turn off|switch off|shut off|mute)\b.*\b(sound|music|rain|ocean|waves|noise|audio|wind|fire|track)\b/.test(t) || /^(stop|pause)( it| the sound| the music)?[.!]?$/.test(t.trim())) {
+      Sound.stop(); stopTrack(); S.favSound = null; say('Okay, I have stopped it.'); return true;
+    }
+    const verb = /\b(play|put on|start|turn on|switch on|let me hear|i want|i would like|i'd like|can you|could you|give me|hear|need)\b/.test(t);
+    const kinds = [['rain', /\b(rain|raining|rainfall|thunder)\b/], ['ocean', /\b(ocean|wave|waves|sea|beach)\b/], ['wind', /\b(wind|breeze)\b/], ['fire', /\b(fire|fireplace|campfire|crackl\w*)\b/], ['deep', /\b(white noise|deep calm|calm sound|calming sound|relaxing sound|nature sound|sleep sound)\b/]];
+    if (verb && /\b(sound|sounds|noise|rain|ocean|waves|wind|fire|fireplace|campfire|breeze|thunder)\b/.test(t)) {
+      for (let i = 0; i < kinds.length; i++) if (kinds[i][1].test(t)) {
+        const label = SYNTH_SOUNDS.filter(function (x) { return x[0] === kinds[i][0]; })[0][1];
+        Sound.stop(); stopTrack();
+        if (Sound.start(kinds[i][0], 10)) { S.favSound = 'synth:' + kinds[i][0]; say('Playing ' + label.toLowerCase() + ' for you. It switches off after 10 minutes, or just say stop.'); return true; }
+      }
+    }
+    if (verb && /\b(music|song|songs|lofi|lo-fi|playlist|piano|instrumental|recitation|quran)\b/.test(t)) {
+      const words = t.split(/\W+/).filter(function (w) { return w.length > 3; });
+      const hit = (S.cfg.media || []).filter(function (m) { return /^audio/i.test(m.type) && words.some(function (w) { return (m.title + ' ' + m.tag).toLowerCase().indexOf(w) > -1 && !/music|play|please|some|want|would|like|could|give/.test(w); }); })[0] || (S.cfg.media || []).filter(function (m) { return /^audio/i.test(m.type) && /music|relax|calm|lofi|piano/i.test(m.tag + ' ' + m.title); })[0];
+      if (hit) { Sound.stop(); stopTrack(); playTrack(hit); say('Now playing ' + hit.title + '. Say stop whenever you like.'); return true; }
+      if (['support', 'talk'].indexOf(S.phase) > -1) { openMusicPanel(); return true; }
+    }
+    if (['support', 'talk'].indexOf(S.phase) > -1 && /\b(exercise|technique|breathing|breathe|relax|muscle|ground|grounding|butterfly|safe place|worry|reframe)\b/.test(t) && (verb || /\b(show|guide|teach|try|do|start|begin)\b/.test(t))) {
+      const keyMap = [[/breath/, /BREATH/i], [/muscle|body scan|relax/, /PMR|MUSCLE|RELAX/i], [/ground|senses|5-?4-?3/, /GROUND/i], [/butterfly|hug/, /BUTTERFLY/i], [/safe place|imagin/, /SAFE/i], [/worry|dump|write/, /WORRY/i], [/reframe|thought/, /REFRAME|THOUGHT/i]];
+      const list = S.cfg.exercises || [];
+      for (let i = 0; i < keyMap.length; i++) if (keyMap[i][0].test(t)) {
+        const ex = list.filter(function (e) { return keyMap[i][1].test(e.key + ' ' + e.title); })[0];
+        if (ex) { runTechnique(ex); return true; }
+      }
+      if (/exercise|technique/.test(t)) { openTechniqueMenu(); return true; }
+    }
+    return false;
+  }
   async function send(text) {
     text = (text || '').trim();
     if (!text || S.busy || ['listen', 'soothe', 'practice', 'talk', 'support'].indexOf(S.phase) < 0 || S.crisis) return;
     S.busy = true; clearTray();
     addMsg('user', text); S.history.push({ role: 'user', text: text });
+    if (localCommand(text)) { S.busy = false; return; }
     const dots = typing();
     try {
       const r = await run('chatTurn', {
