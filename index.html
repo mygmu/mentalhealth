@@ -183,12 +183,36 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
 
 /* 3D human guide */
 .stage3d{position:relative;height:300px;margin:8px 0 10px;border-radius:16px;overflow:hidden;background:linear-gradient(#E6F4EF,#F8F3E8);touch-action:pan-y;cursor:grab;background-size:cover;background-position:center}
-.stage3d.compact{height:100%;margin:0;background:none!important;border-radius:0;box-shadow:none;border:0}
+.stage3d.compact{height:100%;width:100%;margin:0;background:none!important;border-radius:0;box-shadow:none;border:0;cursor:pointer;touch-action:manipulation}
 .stage3d.compact .hint3d,.stage3d.compact .cap3d,.stage3d.compact .hear3d{display:none}
-#companion{position:fixed;right:10px;bottom:108px;width:132px;height:172px;z-index:30;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(23,53,63,.28))}
+#companion{position:fixed;right:10px;bottom:120px;width:118px;height:206px;z-index:30}
 #companion[hidden]{display:none}
-#companion .cx{position:absolute;top:-6px;right:-4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(23,53,63,.75);color:#fff;font-size:14px;line-height:1;cursor:pointer;pointer-events:auto}
-@media(max-width:520px){#companion{width:104px;height:136px;bottom:116px;right:6px}}
+#cmpStage{position:absolute;inset:0;filter:drop-shadow(0 6px 8px rgba(23,53,63,.25))}
+#cmpBubble{position:absolute;right:4px;bottom:100%;margin-bottom:2px;width:max-content;max-width:176px;background:#fff;border:1.5px solid #3E8E8A;color:#17353F;border-radius:14px;padding:7px 11px;font-size:.8rem;font-weight:600;line-height:1.25;box-shadow:0 4px 12px rgba(23,53,63,.18);cursor:pointer;animation:cmpbob 2.4s ease-in-out infinite}
+#cmpBubble:after{content:"";position:absolute;right:30px;bottom:-7px;width:11px;height:11px;background:#fff;border-right:1.5px solid #3E8E8A;border-bottom:1.5px solid #3E8E8A;transform:rotate(45deg)}
+@keyframes cmpbob{50%{transform:translateY(-3px)}}
+#cmpStatus{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:2px;background:#17353F;color:#fff;border-radius:999px;padding:4px 10px;font-size:.75rem;white-space:nowrap}
+#cmpStatus:empty{display:none}
+#companion .cbtn{position:absolute;top:2px;left:-4px;width:30px;height:30px;border-radius:50%;border:1.5px solid #17353F;background:rgba(255,255,255,.95);color:#17353F;font-size:16px;line-height:1;cursor:pointer;z-index:2}
+#cmpCap{display:none}
+#companion.full #cmpBubble{display:none}
+@media(max-width:520px){#companion{width:92px;height:162px;bottom:112px;right:6px}#cmpBubble{max-width:150px;font-size:.74rem}}
+/* full-screen call mode: big character, chat hidden, action buttons shown below her */
+body.cr-full{overflow:hidden}
+body.cr-full #companion{inset:0;width:auto;height:auto;background:linear-gradient(#E6F4EF,#F8F3E8);z-index:40}
+body.cr-full #cmpStage{inset:46px 0 var(--ovB,150px) 0;filter:drop-shadow(0 10px 14px rgba(23,53,63,.2))}
+body.cr-full #cmpCap{display:block;position:absolute;top:10px;left:56px;right:12px;max-height:30vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 14px;font-size:1rem;line-height:1.4;color:#17353F;box-shadow:0 4px 14px rgba(23,53,63,.1)}
+body.cr-full #cmpCap:empty{display:none}
+body.cr-full #companion .cbtn{top:10px;left:10px;width:38px;height:38px;font-size:18px}
+body.cr-full #cmpStatus{bottom:auto;top:auto;position:absolute;left:50%;bottom:calc(var(--ovB,150px) + 4px);margin:0}
+body.cr-full #chat>.m{display:none}
+body.cr-full #chat>:not(.m):not(:last-child){display:none}
+body.cr-full #chat{position:fixed;left:0;right:0;bottom:var(--ftH,110px);flex:none;max-height:48vh;z-index:45;background:#fff;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -8px 20px rgba(23,53,63,.12)}
+body.cr-full #chat:not(:has(>:last-child:not(.m))){display:none}
+body.cr-full #tray{position:fixed;left:0;right:0;bottom:var(--ftH,110px);z-index:46;max-height:40vh;overflow:auto}
+body.cr-full #tray[hidden]{display:none}
+body.cr-full #relaxBar{display:none}
+body.cr-full footer{position:fixed;left:0;right:0;bottom:0;z-index:50}
 .hear3d{position:absolute;right:10px;bottom:8px;background:rgba(255,255,255,.92);border:1.5px solid #17353F;color:#17353F;border-radius:999px;padding:6px 12px;font-weight:600;font-size:.82rem;cursor:pointer}
 .stage3d.sky{background:linear-gradient(#BFE3F5,#EAF6F1 70%)}
 .stage3d.frozen{cursor:default}
@@ -245,7 +269,13 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       <button class="btn" id="startBtn" type="button" disabled>Begin</button>
     </section>
 
-    <div id="companion" hidden></div>
+    <div id="companion" hidden>
+      <div id="cmpStage"></div>
+      <div id="cmpCap" aria-live="polite"></div>
+      <button type="button" class="cbtn" id="cmpFull" aria-label="Full screen">&#x26F6;</button>
+      <div id="cmpStatus" aria-live="polite"></div>
+      <div id="cmpBubble" role="button" tabindex="0">Want to talk with voice? Click me!</div>
+    </div>
     <div id="chat" role="log" aria-live="polite" hidden></div>
     <div id="tray" hidden></div>
     <section id="home" hidden></section>
@@ -385,7 +415,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
   function addNode(n) { $('chat').appendChild(n); scrollDown(); return n; }
   function addMsg(kind, text) {
     const d = document.createElement('div'); d.className = 'm ' + kind; d.textContent = text;
-    addNode(d); if (kind === 'ai') speak(text); return d;
+    addNode(d); if (kind === 'ai') { $('cmpCap').textContent = text; speak(text); } return d;
   }
   function typing() {
     const d = document.createElement('div'); d.className = 'm ai typing'; d.setAttribute('aria-label', 'Typing');
@@ -576,22 +606,57 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     speakWith(text, S.crisis ? 'concerned' : 'warm', Companion.api);
   }
 
-  /* The on-screen guide for the chat: appears in voice mode, listens, speaks with expression. */
-  const Companion = { api: null, closed: false };
+  /* The on-screen guide: always available once the chat opens. Tap her to talk by voice; the corner button makes her full screen. */
+  const Companion = { api: null, full: false };
+  function setVars() {
+    const ft = $('foot'), tr = $('tray'), ch = $('chat');
+    const f = ft && !ft.hidden ? ft.offsetHeight : 0, t = tr && !tr.hidden ? tr.offsetHeight : 0;
+    const lc = ch.lastElementChild, lastCard = lc && !lc.classList.contains('m') && Companion.full ? Math.min(lc.offsetHeight + 36, window.innerHeight * 0.48) : 0;
+    const r = document.documentElement.style;
+    r.setProperty('--ftH', f + 'px'); r.setProperty('--ovB', (f + Math.max(t, lastCard) + 8) + 'px');
+    const slot = $('companion'); if (slot) slot.style.bottom = Companion.full ? '' : (f + 8) + 'px';
+  }
   function syncCompanion() {
     const slot = $('companion'); if (!slot) return;
-    const show = S.voiceOn && !$('chat').hidden;
-    if (show && !Companion.api) { Companion.api = stage3d('companion', null, null, { compact: true, noButton: true }); slot.appendChild(Companion.api.el);
-      const x = document.createElement('button'); x.type = 'button'; x.className = 'cx'; x.setAttribute('aria-label', 'Hide the guide'); x.textContent = '\u00d7';
-      x.onclick = function () { Companion.closed = true; slot.hidden = true; }; slot.appendChild(x); }
-    slot.hidden = !show || !!Companion.closed;
-    const ft = $('foot'); if (ft && !ft.hidden) slot.style.bottom = (ft.offsetHeight + 6) + 'px';
+    const show = !$('chat').hidden;
+    if (show && !Companion.api) {
+      Companion.api = stage3d('companion', null, null, { compact: true, noButton: true });
+      Companion.api.el.addEventListener('click', cmpTap); $('cmpStage').appendChild(Companion.api.el);
+    }
+    slot.hidden = !show; if (!show && Companion.full) setFull(false);
+    setVars();
   }
+  function setFull(on) {
+    Companion.full = !!on; document.body.classList.toggle('cr-full', Companion.full);
+    $('cmpFull').innerHTML = Companion.full ? '&#x2715;' : '&#x26F6;';
+    $('cmpFull').setAttribute('aria-label', Companion.full ? 'Back to chat' : 'Full screen');
+    if (!Companion.full) $('companion').style.bottom = ''; setVars(); setTimeout(setVars, 80);
+  }
+  $('cmpFull').onclick = function (e) { e.stopPropagation(); setFull(!Companion.full); };
+  function cmpTap() {
+    if (Voice.speaking) { stopSpeaking(); }
+    if (!S.voiceOn) { S.voiceOn = true; syncVoiceBtn(); }
+    if (Voice.listening) { $('mic').click(); return; }
+    if ($('mic').disabled) { setNote('Please finish the current step first, then tap me to talk.'); return; }
+    $('mic').click();
+  }
+  $('cmpBubble').onclick = cmpTap;
+  $('cmpBubble').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cmpTap(); } };
+  setInterval(function () {
+    if ($('companion').hidden) return;
+    const st = Voice.listening ? 'Listening...' : Voice.speaking ? 'Speaking...' : S.busy ? 'Thinking...' : '';
+    if ($('cmpStatus').textContent !== st) $('cmpStatus').textContent = st;
+    $('cmpBubble').style.display = (S.voiceOn || Companion.full || Voice.listening) ? 'none' : '';
+    if (Companion.api && Companion.api.ok && !Voice.speaking && !Voice.listening) Companion.api.emote(S.busy ? 'attentive' : 'calm');
+    if (Companion.full) setVars();
+  }, 400);
+  window.addEventListener('resize', setVars);
+  ['home', 'page'].forEach(function (id) { new MutationObserver(function () { if (!$(id).hidden && Companion.full) setFull(false); }).observe($(id), { attributes: true, attributeFilter: ['hidden'] }); });
 
   /* In voice mode the student's turn starts automatically once the reply has been spoken. */
   function afterSpeech() {
     if (!S.voiceOn || !SR || Voice.listening || S.busy || S.crisis) return;
-    if (['listen', 'talk'].indexOf(S.phase) < 0) return;
+    if (['listen', 'talk', 'support'].indexOf(S.phase) < 0) return;
     setTimeout(function () { if (S.voiceOn && !Voice.listening && !Voice.speaking && !S.busy) startListening(); }, 600);
   }
 
@@ -651,7 +716,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     });
   };
   $('voice').onclick = function () {
-    S.voiceOn = !S.voiceOn; syncVoiceBtn(); if (S.voiceOn) Companion.closed = false; syncCompanion();
+    S.voiceOn = !S.voiceOn; syncVoiceBtn(); syncCompanion();
     if (!S.voiceOn) { stopSpeaking(); if (Voice.rec) Voice.rec.stop(); setNote(''); return; }
     if (!SR) setNote('This browser can read replies aloud, but voice input needs Chrome, Edge or Safari.');
     else afterSpeech();
@@ -662,7 +727,6 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
   $('lang').onchange = function () { Voice.lang = this.value; if (Voice.rec) Voice.rec.stop(); stopSpeaking(); setNote(''); };
   if (!SR) $('mic').hidden = true;
   else if (IN_GAS) $('mic').addEventListener('click', function () { setNote('The microphone only works on the voice page, not inside this embedded view.', S.cfg && S.cfg.voiceUrl); }, true);
-  window.addEventListener('resize', syncCompanion);
   new MutationObserver(syncCompanion).observe($('chat'), { attributes: true, attributeFilter: ['hidden'] });
 
   /* ---------- welcome and consent ---------- */
@@ -761,7 +825,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     try {
       const r = await run('chatTurn', {
         sessionId: S.sessionId, stage: S.phase === 'support' ? 'support' : (S.phase === 'listen' ? 'listen' : (S.phase === 'talk' ? 'talk' : 'aside')),
-        history: S.history, known: { scoreBefore: S.scoreBefore }, ctx: { risk: S.risk }
+        history: S.history, known: { scoreBefore: S.scoreBefore }, ctx: { risk: S.risk }, voice: !!S.voiceOn || Companion.full
       });
       dots.remove();
       if (r.crisis) { handleUrgent('Crisis language detected during the conversation.'); return; }
@@ -930,7 +994,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
   function buildFigure(api, kind) {
     const T = window.THREE, el = api.el, still = reduced();
     const V = function (x, y, z) { return new T.Vector3(x, y, z); };
-    const sit = kind === 'breath' || kind === 'butterfly' || kind === 'safe' || kind === 'write' || kind === 'companion';
+    const sit = kind === 'breath' || kind === 'butterfly' || kind === 'safe' || kind === 'write';
     const renderer = new T.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     const cv = renderer.domElement; cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'A 3D figure demonstrating the exercise.');
@@ -938,7 +1002,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
     const cap = document.createElement('div'); cap.className = 'cap3d'; el.appendChild(cap);
     const hint = document.createElement('div'); hint.className = 'hint3d'; hint.textContent = 'Drag to turn the figure'; el.appendChild(hint);
     const scene = new T.Scene(), cam = new T.PerspectiveCamera(kind === 'companion' ? 26 : 30, 1.5, 0.1, 30);
-    const CAM = { ground: [0.98, 3.75, 0.9], pmr: [0.98, 3.75, 0.9], breath: [1.0, 2.55, 0.95], butterfly: [1.0, 2.55, 0.95], safe: [0.85, 3.4, 0.72], write: [0.85, 3.3, 0.72], reframe: [1.5, 2.7, 1.42], companion: [1.22, 1.62, 1.04] }[kind];
+    const CAM = { ground: [0.98, 3.75, 0.9], pmr: [0.98, 3.75, 0.9], breath: [1.0, 2.55, 0.95], butterfly: [1.0, 2.55, 0.95], safe: [0.85, 3.4, 0.72], write: [0.85, 3.3, 0.72], reframe: [1.5, 2.7, 1.42], companion: [0.95, 4.3, 0.88] }[kind];
     cam.position.set(0, CAM[0], CAM[1]); cam.lookAt(0, CAM[2], 0);
     scene.add(new T.HemisphereLight(0xffffff, 0xb9cfcc, 0.95));
     const key = new T.DirectionalLight(0xfff3e6, 0.7); key.position.set(1.6, 3, 2.6); scene.add(key);
@@ -1005,6 +1069,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       const stM = new T.MeshStandardMaterial({ color: 0x38444B, roughness: 0.4, metalness: 0.3 });
       const st = add(body, new T.TorusGeometry(0.085, 0.0065, 8, 28, Math.PI), stM); st.rotation.z = Math.PI; st.position.set(0, 0.55, 0.045); st.scale.set(1, 1.5, 1); st.rotation.x = 0.35;
       const cp = add(body, new T.CylinderGeometry(0.02, 0.02, 0.01, 18), stM); cp.rotation.x = Math.PI / 2; cp.position.set(0.075, 0.38, 0.133);
+      const skirt = add(body, prof([[0.001, -0.5], [0.15, -0.5], [0.178, -0.36], [0.168, -0.12], [0.15, 0.04], [0.001, 0.05]]), new T.MeshStandardMaterial({ color: SHIRT, roughness: 0.62 })); skirt.scale.z = 0.8;
       const pocket = add(body, new T.BoxGeometry(0.06, 0.05, 0.008), new T.MeshStandardMaterial({ color: 0xE3E9ED, roughness: 0.7 })); pocket.position.set(-0.1, 0.2, 0.113);
     }
     const scleraM = new T.MeshStandardMaterial({ color: 0xF7F4EE, roughness: 0.3 }), irisM = new T.MeshStandardMaterial({ color: 0x5B3B26, roughness: 0.25 });
@@ -1239,9 +1304,9 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
       gAmt += ((lvl > 0.04 || (mine && Voice.speaking) ? 1 : 0) - gAmt) * (still ? 1 : 1 - Math.exp(-dt * 2.2));
       if (kind === 'companion') {
         const sp = still ? 0 : gAmt;
-        tgt.hL.set(0.13 + sp * (0.08 + 0.03 * sn(t * 1.9)), 0.03 + sp * (0.17 + 0.06 * sn(t * 2.6)), 0.3 + 0.03 * sn(t * 1.3) * sp);
-        tgt.hR.set(-0.13 - sp * (0.08 + 0.03 * sn(t * 1.5 + 1)), 0.03 + sp * (0.15 + 0.06 * sn(t * 2.2 + 2)), 0.3 + 0.03 * sn(t * 1.7) * sp);
-        limbs[0].pnT.set(0.35 * sp, 0.55 * sp, 0.1 + 0.4 * sp).add(V(-1 * (1 - sp), 0, 0)); limbs[1].pnT.set(-0.35 * sp, 0.55 * sp, 0.1 + 0.4 * sp).add(V(1 * (1 - sp), 0, 0));
+        tgt.hL.set(0.24 - sp * (0.06 + 0.02 * sn(t * 1.9)), -0.04 + sp * (0.3 + 0.06 * sn(t * 2.6)), 0.05 + sp * (0.27 + 0.04 * sn(t * 1.3)));
+        tgt.hR.set(-0.24 + sp * (0.06 + 0.02 * sn(t * 1.5 + 1)), -0.04 + sp * (0.27 + 0.06 * sn(t * 2.2 + 2)), 0.05 + sp * (0.25 + 0.04 * sn(t * 1.7)));
+        limbs[0].pnT.set(-(1 - sp), sp, 0.15); limbs[1].pnT.set(1 - sp, sp, 0.15);
       }
       /* ease towards the targets, then solve the skeleton */
       ['hL', 'hR', 'fL', 'fR'].forEach(function (n) { cur[n].lerp(tgt[n], k); });
@@ -1304,7 +1369,7 @@ dialog h2{font:500 1.4rem 'Newsreader',Georgia,serif;margin:0 0 8px}
 
     /* drag to turn the figure; vertical swipes still scroll the page */
     let dragX = null;
-    el.addEventListener('pointerdown', function (e) { if (e.target.tagName === 'BUTTON') return; dragX = e.clientX; hint.style.opacity = 0; });
+    el.addEventListener('pointerdown', function (e) { if (e.target.tagName === 'BUTTON' || kind === 'companion') return; dragX = e.clientX; hint.style.opacity = 0; });
     window.addEventListener('pointermove', function (e) { if (dragX == null) return; yawUser += (e.clientX - dragX) * 0.012; dragX = e.clientX; });
     window.addEventListener('pointerup', function () { dragX = null; });
     window.addEventListener('pointercancel', function () { dragX = null; });
