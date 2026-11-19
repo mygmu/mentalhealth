@@ -420,6 +420,20 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
 .goffer .gq{font-size:1.05rem}
 .grow .btn:not(.ghost){background:var(--lagoon);color:#fff}
 .grow .btn:not(.ghost):disabled{background:#9DB8B5}
+
+.ginsight{display:flex;flex-direction:column;gap:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.gih{margin:0;font-size:1rem;color:#14524C}
+.gload{color:var(--muted);animation:gpulse 1.2s ease-in-out infinite alternate}
+@keyframes gpulse{from{opacity:.45}to{opacity:1}}
+.gpattern{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:14px;background:#F1ECFB;color:#40337A}
+.gsteps{display:flex;flex-direction:column;gap:8px}
+.gstep{display:grid;grid-template-columns:28px 1fr;gap:4px 10px;align-items:start;padding:10px 12px;border-radius:14px;background:#F4FAF8;border:1px solid var(--line)}
+.gstep i{font-style:normal;font-weight:700;width:26px;height:26px;border-radius:50%;background:var(--lagoon);color:#fff;display:grid;place-items:center;font-size:.85rem}
+.gstep .chip{grid-column:2;justify-self:start;min-height:36px;padding:6px 12px;font-size:.85rem}
+.gcouns{padding:14px;border-radius:16px;display:flex;flex-direction:column;gap:8px}
+.gcouns.consider{background:#FFF6E0;border:1px solid #EBD9B0}
+.gcouns.recommend{background:#FDECEA;border:1px solid #E7B4AE}
+.gcouns p{margin:0}.gp.muted{color:var(--muted);font-size:.92rem}
 @media (prefers-reduced-motion:reduce){.gstage.pop,.gspark{animation:none}.need:hover,.gcard:hover,.gpromo:hover{transform:none}}
 </style>
 </head>
@@ -2439,7 +2453,8 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
       G('Comparing your inside with everyone else’s outside is never a fair race.', 'مقارنة داخلك بمظهر الآخرين الخارجي ليست سباقًا عادلًا أبدًا.')]
   ];
 
-  function gameUI(box, total) {
+  function gameUI(box, total, gid) {
+    const rec = [];
     const dots = el('div', 'gdots'), stage = el('div', 'gstage');
     box.appendChild(dots); box.appendChild(stage);
     let n = 0, tot = 0;
@@ -2458,6 +2473,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
     };
     const ui = {
       setTotal: setTotal,
+      note: function (thought, ok) { rec.push({ q: 'Tricky thought', a: thought + (ok ? ' (chose the fairer reply)' : ' (chose the tricky reply)') }); },
       say: function (text, label, opt) {
         return new Promise(function (ok) {
           const c = card(null, opt); c.appendChild(el('p', 'gp', text));
@@ -2474,7 +2490,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
           const go = btnEl('btn big', opt.label || G('Next', 'التالي'), function () {
             const v = ta.value.trim();
             if (GAME_CRISIS.test(v)) { handleUrgent('Crisis language detected during a mind game.'); return; }
-            mark(1); ok(v);
+            rec.push({ q: q, a: v }); mark(1); ok(v);
           });
           go.disabled = true; ta.oninput = function () { go.disabled = ta.value.trim().length < 2; };
           c.appendChild(ta); c.appendChild(go);
@@ -2488,20 +2504,20 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
           const out = el('output', 'gval', '50%'); r.oninput = function () { out.textContent = r.value + '%'; };
           const ends = el('div', 'gends'); ends.appendChild(el('span', null, G('Not at all', 'أبدًا'))); ends.appendChild(el('span', null, G('Completely', 'تمامًا')));
           row.appendChild(out); row.appendChild(r); row.appendChild(ends); c.appendChild(row);
-          c.appendChild(btnEl('btn big', G('Set', 'تأكيد'), function () { mark(1); ok(parseInt(r.value, 10)); })); put(c);
+          c.appendChild(btnEl('btn big', G('Set', 'تأكيد'), function () { rec.push({ q: q, a: r.value + '%' }); mark(1); ok(parseInt(r.value, 10)); })); put(c);
         });
       },
       choose: function (q, options, opt) {
         return new Promise(function (ok) {
           const c = card(q, opt), list = el('div', 'gopts');
-          options.forEach(function (o, i) { list.appendChild(btnEl('gopt', o, function () { mark(1); ok(i); })); });
+          options.forEach(function (o, i) { list.appendChild(btnEl('gopt', o, function () { rec.push({ q: q, a: o }); mark(1); ok(i); })); });
           c.appendChild(list); put(c);
         });
       },
       multi: function (q, options, max) {
         return new Promise(function (ok) {
           const c = card(q), list = el('div', 'gpills'), sel = [];
-          const done = btnEl('btn big', G('Done', 'تم'), function () { mark(1); ok(sel.slice()); }); done.disabled = true;
+          const done = btnEl('btn big', G('Done', 'تم'), function () { rec.push({ q: q, a: sel.map(function (i) { return options[i]; }).join(', ') }); mark(1); ok(sel.slice()); }); done.disabled = true;
           options.forEach(function (o, i) {
             const b = btnEl('gpill', o, function () {
               const k = sel.indexOf(i);
@@ -2518,15 +2534,70 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
         if (r.quote) c.appendChild(el('blockquote', 'gquote', r.quote));
         if (r.extra) c.appendChild(r.extra);
         if (r.lesson) { const ls = el('p', 'glesson', r.lesson); c.appendChild(ls); }
+        const ins = el('div', 'ginsight'); c.appendChild(ins);
         const row = el('div', 'grow');
         if (r.step) { const sb = btnEl('btn', G('Save as a small step', 'احفظها كخطوة صغيرة'), function () { addPlanStep(r.step); sb.disabled = true; sb.textContent = G('Saved to my plan', 'حُفظت في خطتي'); }); row.appendChild(sb); }
         row.appendChild(btnEl('btn ghost', G('Talk about it', 'تحدّث عنها'), function () { goTalk(r.talk || 'I just played a mind game and I would like to talk about it.'); }));
         row.appendChild(btnEl('btn ghost', G('Another game', 'لعبة أخرى'), openGames));
-        c.appendChild(row); mark(99); put(c);
+        c.appendChild(row); mark(99); put(c); insightPanel(ins, gid, rec, r.signals || {});
         Store.set('gamesPlayed', (Store.get('gamesPlayed', 0) || 0) + 1);
       }
     };
     return ui;
+  }
+
+  /* ---------- AI analysis after a game: practical steps, and a counsellor when it is needed ---------- */
+  const GFALL = {
+    detective: [[G('Re-read your fairer thought tonight and again tomorrow morning.', 'أعد قراءة فكرتك الأكثر إنصافًا الليلة وغدًا صباحًا.'), G('When the worry returns, ask: what is the evidence, and what is only a guess?', 'حين يعود القلق اسأل: ما الدليل، وما مجرد تخمين؟'), G('Write one fact against the worry on a note where you study.', 'اكتب حقيقة واحدة ضد القلق على ورقة في مكان مذاكرتك.')], G('Thoughts lose their grip when you test them against facts.', 'تفقد الأفكار قبضتها حين تختبرها بالوقائع.')],
+    friend: [[G('Say your friend-words out loud to yourself once today.', 'قل لنفسك بصوت مسموع كلماتك التي وجّهتها لصديقك مرة اليوم.'), G('When you criticise yourself, pause and ask: would I say this to a friend?', 'حين تنتقد نفسك توقف واسأل: هل كنت سأقول هذا لصديق؟'), G('Tell one trusted person how hard this has felt.', 'أخبر شخصًا تثق به كم كان هذا صعبًا.')], G('Treat yourself the way you would treat someone you care about.', 'عامل نفسك كما تعامل من تهتم لأمره.')],
+    zoomout: [[G('Pick the one task that matters most this week and give it 15 focused minutes.', 'اختر المهمة الأهم هذا الأسبوع وامنحها 15 دقيقة من التركيز.'), G('Give worry a 10 minute slot today, then move on to something physical.', 'خصص للقلق عشر دقائق اليوم ثم انتقل إلى نشاط جسدي.'), G('Protect sleep and meals before the big day; they help more than extra hours.', 'احمِ نومك ووجباتك قبل اليوم الكبير؛ فهما أنفع من ساعات إضافية.')], G('Zoom out whenever the moment feels huge.', 'انظر من بعيد كلما بدت اللحظة هائلة.')],
+    compass: [[G('Do your tiny action within the next three hours.', 'نفّذ فعلك الصغير خلال الساعات الثلاث القادمة.'), G('Put your value word on your phone lock screen as a reminder.', 'ضع كلمة قيمتك على شاشة قفل هاتفك للتذكير.'), G('Tonight, note whether the action felt right and what you would repeat.', 'الليلة، دوّن هل بدا الفعل صائبًا وما الذي ستكرره.')], G('When unsure, ask which choice fits your value.', 'حين تتردد اسأل: أي خيار يوافق قيمتي؟')],
+    control: [[G('Do the first five-minute step for the thing you can control, now.', 'نفّذ أول خطوة من خمس دقائق للأمر الذي تتحكم فيه، الآن.'), G('For what you cannot control, breathe out slowly three times and tell yourself: not mine to carry.', 'لما لا تتحكم فيه، ازفر ببطء ثلاث مرات وقل لنفسك: ليس عليّ حمله.'), G('Ask one person who can help with the thing you can only influence.', 'اطلب من شخص قادر على المساعدة أن يعينك فيما تستطيع التأثير فيه فقط.')], G('Spend your energy in the first circle.', 'أنفق طاقتك في الدائرة الأولى.')],
+    reframe: [[G('Catch one tricky thought today and name its type.', 'التقط فكرة مخادعة واحدة اليوم وسمِّ نوعها.'), G('Before acting on a harsh thought, ask: fact or guess?', 'قبل أن تتصرف بناءً على فكرة قاسية اسأل: حقيقة أم تخمين؟'), G('Write one fairer sentence for the thought you repeat most.', 'اكتب جملة أكثر إنصافًا للفكرة التي تكررها أكثر.')], G('Naming a trick takes away part of its power.', 'تسمية الحيلة تسحب جزءًا من قوتها.')],
+    gratitude: [[G('Write three good things again tonight before bed.', 'اكتب ثلاثة أشياء جيدة مرة أخرى الليلة قبل النوم.'), G('Thank one person for something small today.', 'اشكر شخصًا على أمر صغير اليوم.'), G('Keep your list where you can see it on a hard day.', 'احتفظ بقائمتك حيث تراها في اليوم الصعب.')], G('Noticing what works is a skill that grows with practice.', 'ملاحظة ما يسير جيدًا مهارة تنمو بالتدريب.')]
+  };
+  function localInsight(gid, heavy, recent) {
+    const f = GFALL[gid] || GFALL.detective;
+    return { local: true, summary: G('I could not reach the AI analysis just now, so here are practical steps based on the game you played.', 'تعذّر الوصول إلى التحليل الذكي الآن، لذا إليك خطوات عملية مبنية على اللعبة التي لعبتها.'), pattern: '', steps: f[0], ifBack: f[1], level: recent >= 2 ? 'recommend' : (heavy ? 'consider' : 'none'), reason: '' };
+  }
+  function showInsight(box, r) {
+    if (r.summary) box.appendChild(el('p', 'gp', r.summary));
+    if (r.pattern) { const pt = el('div', 'gpattern'); pt.appendChild(el('b', null, G('What I notice', 'ما ألاحظه'))); pt.appendChild(el('span', null, r.pattern)); box.appendChild(pt); }
+    if (r.steps && r.steps.length) {
+      box.appendChild(el('h4', 'gih', G('Practical steps for the next 24 hours', 'خطوات عملية للساعات الأربع والعشرين القادمة')));
+      const ol = el('div', 'gsteps');
+      r.steps.forEach(function (t, i) {
+        const row = el('div', 'gstep'); row.appendChild(el('i', null, String(i + 1))); row.appendChild(el('span', null, t));
+        const b = btnEl('chip', G('Add to my plan', 'أضف إلى خطتي'), function () { addPlanStep(t); b.disabled = true; b.textContent = G('Saved to my plan', 'حُفظت في خطتي'); });
+        row.appendChild(b); ol.appendChild(row);
+      });
+      box.appendChild(ol);
+    }
+    if (r.ifBack) { const ib = el('p', 'glesson'); ib.appendChild(el('b', null, G('If it comes back: ', 'إن عاد القلق: '))); ib.appendChild(document.createTextNode(r.ifBack)); box.appendChild(ib); }
+    if (r.level === 'recommend' || r.level === 'consider') {
+      const cc = el('div', 'gcouns ' + r.level);
+      cc.appendChild(el('b', null, r.level === 'recommend' ? G('I recommend talking with a counsellor', 'أنصحك بالتحدث مع مرشد') : G('It may help to talk with a counsellor', 'قد يفيدك التحدث مع مرشد')));
+      cc.appendChild(el('p', null, r.level === 'recommend' ? G('What you shared sounds heavy, and a real person can support you better than a game can. It is a normal and sensible step.', 'ما شاركته يبدو ثقيلًا، وشخص حقيقي يستطيع دعمك أفضل من أي لعبة. وهذه خطوة طبيعية وحكيمة.') : G('If this keeps coming back, a short conversation with a counsellor can really help.', 'إن استمر هذا الأمر في العودة، فمحادثة قصيرة مع مرشد قد تفيدك كثيرًا.')));
+      if (r.reason) cc.appendChild(el('p', 'gp muted', r.reason));
+      const row = el('div', 'grow');
+      row.appendChild(btnEl('btn', G('Ask a counsellor to contact me', 'اطلب أن يتواصل معي مرشد'), goCounsellor));
+      cc.appendChild(row); box.appendChild(cc);
+      if (r.level === 'recommend') box.appendChild(contactActions());
+    }
+  }
+  function insightPanel(box, gid, rec, sig) {
+    box.appendChild(el('h4', 'gih', G('Your personal analysis', 'تحليلك الشخصي')));
+    const load = el('p', 'gp gload', G('Reading your answers...', 'أقرأ إجاباتك...')); box.appendChild(load);
+    const week = 7 * 864e5, now = Date.now();
+    let heavyList = (Store.get('heavyGames', []) || []).filter(function (t) { return now - t < week; });
+    if (sig.heavy) { heavyList.push(now); Store.set('heavyGames', heavyList.slice(-20)); }
+    const recent = heavyList.length;
+    run('gameInsight', { sessionId: S.sessionId, game: gid, answers: rec, signals: { heavy: !!sig.heavy }, heavyRecent: recent, lang: window.CR_LANG || 'en' })
+      .then(function (r) {
+        if (r && r.crisis) { handleUrgent('Crisis language detected during a mind game.'); return; }
+        load.remove(); showInsight(box, r);
+      })
+      .catch(function () { load.remove(); showInsight(box, localInsight(gid, !!sig.heavy, recent)); });
   }
 
   const GAMES = [
@@ -2544,7 +2615,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
             : G('Your belief did not change much, and that is okay. Thoughts often need a few rounds, and the fairer thought still helps over time.', 'لم يتغير تصديقك كثيرًا، وهذا لا بأس به. تحتاج الأفكار غالبًا إلى عدة جولات، والفكرة الأكثر إنصافًا تفيد مع الوقت.'),
             G('Your fairer thought:', 'فكرتك الأكثر إنصافًا:')], quote: v,
           lesson: G('A thought is a guess, not a fact. A good detective checks the evidence before believing it.', 'الفكرة تخمين وليست حقيقة. والمحقق الجيد يفحص الأدلة قبل أن يصدّق.'),
-          step: 'Read my fairer thought once tonight: ' + v.slice(0, 100), talk: 'I played Thought Detective about a worry and I would like to talk it through.' });
+          signals: { heavy: b2 >= 70 }, step: 'Read my fairer thought once tonight: ' + v.slice(0, 100), talk: 'I played Thought Detective about a worry and I would like to talk it through.' });
       } },
     { id: 'friend', title: G('Best-Friend Swap', 'تبادل الصديق'), tag: G('Feeling low', 'الشعور بالإحباط'), mins: 2,
       blurb: G('We are kinder to friends than to ourselves. Borrow that kindness.', 'نحن ألطف مع أصدقائنا منا مع أنفسنا. استعر هذا اللطف.'),
@@ -2556,7 +2627,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
         ui.end({ title: G('Kindness works both ways.', 'اللطف يعمل في الاتجاهين.'),
           lines: [k === 2 ? G('It is okay if it still feels heavy. That is a good reason to talk it through with someone.', 'لا بأس إن بقيت ثقيلة. وهذا سبب وجيه للحديث مع شخص عنها.') : G('Nicely done. You already know the right words, you just aimed them at someone else.', 'أحسنت. أنت تعرف الكلمات المناسبة، لكنك كنت توجهها لغيرك.'), G('Your words to your friend:', 'كلماتك لصديقك:')],
           quote: f, lesson: G('Self-compassion is not weakness. Research links it to steadier motivation and less anxiety.', 'التعاطف مع الذات ليس ضعفًا. تربطه الأبحاث بدافعية أكثر ثباتًا وقلق أقل.'),
-          step: 'Say this to myself once today: ' + f.slice(0, 100), talk: 'I played the Best-Friend Swap game and I would like to talk about how I treat myself.' });
+          signals: { heavy: k === 2 }, step: 'Say this to myself once today: ' + f.slice(0, 100), talk: 'I played the Best-Friend Swap game and I would like to talk about how I treat myself.' });
       } },
     { id: 'zoomout', title: G('Zoom Out', 'انظر من بعيد'), tag: G('Exam stress', 'توتر الامتحانات'), mins: 2,
       blurb: G('See how big this will look in a week, a year and five years.', 'انظر كم سيبدو الأمر كبيرًا بعد أسبوع وسنة وخمس سنوات.'),
@@ -2574,7 +2645,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
         ui.end({ title: G('Bigger picture, calmer mind.', 'صورة أوسع، وعقل أهدأ.'),
           lines: [G('Here is how much this matters over time, in your own words:', 'هكذا يبدو أثر الأمر مع الزمن، بحسب تقديرك:'), G('And what stays important to you:', 'وما يبقى مهمًا لك:')], quote: m, extra: viz,
           lesson: G('Stress squeezes the whole future into this one moment. Zooming out gives the rest of your life a vote.', 'يختزل التوتر المستقبل كله في هذه اللحظة. والنظر من بعيد يمنح بقية حياتك صوتًا.'),
-          step: 'Do one small thing today for what matters to me: ' + m.slice(0, 90), talk: 'I played Zoom Out about something that is stressing me and I would like to talk.' });
+          signals: { heavy: vals[1] >= 3 }, step: 'Do one small thing today for what matters to me: ' + m.slice(0, 90), talk: 'I played Zoom Out about something that is stressing me and I would like to talk.' });
       } },
     { id: 'compass', title: G('Values Compass', 'بوصلة القيم'), tag: G('Direction and meaning', 'الاتجاه والمعنى'), mins: 3,
       blurb: G('Pick what matters most to you, then take one tiny step in that direction.', 'اختر ما يهمك أكثر، ثم اتخذ خطوة صغيرة في اتجاهه.'),
@@ -2611,7 +2682,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
         });
         ui.end({ title: G('Your energy, well spent.', 'طاقتك في موضعها الصحيح.'), lines: [G('Here is your map:', 'هذه خريطتك:')], extra: ex,
           lesson: G('Worry feels productive, but only the first circle responds to effort. Spend your energy there first.', 'يبدو القلق مفيدًا، لكن الدائرة الأولى وحدها تستجيب للجهد. أنفق طاقتك فيها أولًا.'),
-          step: step ? step : 'Choose one thing I can control today and do it for 5 minutes.', talk: 'I played Circle of Control and I would like to talk about my worries.' });
+          signals: { heavy: got[2].length === items.length }, step: step ? step : 'Choose one thing I can control today and do it for 5 minutes.', talk: 'I played Circle of Control and I would like to talk about my worries.' });
       } },
     { id: 'reframe', title: G('Reframe Roulette', 'لعبة إعادة التأطير'), tag: G('Self-criticism', 'نقد الذات'), mins: 3,
       blurb: G('Spot the tricky thought and pick the more helpful one.', 'اكتشف الفكرة المخادعة واختر الأكثر نفعًا.'),
@@ -2620,7 +2691,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
         for (let i = 0; i < TRICKS.length; i++) {
           const t = TRICKS[i], opts = [[t[2], 1], [t[3], 0], [t[4], 0]].sort(function () { return Math.random() - 0.5; });
           const k = await ui.choose(G('Which reply to this thought helps more?', 'أيّ رد على هذه الفكرة أنفع؟'), opts.map(function (o) { return o[0]; }), { quote: t[0] });
-          const ok = opts[k][1] === 1; if (ok) score++;
+          const ok = opts[k][1] === 1; if (ok) score++; ui.note(t[0], ok);
           await ui.say(ok ? G('Yes, that one is fairer.', 'نعم، هذه أكثر إنصافًا.') : G('Not quite. That one feels true but is a trick.', 'ليس تمامًا. تلك تبدو صحيحة لكنها حيلة.'),
             i === TRICKS.length - 1 ? G('See my result', 'أرِني نتيجتي') : G('Next thought', 'الفكرة التالية'), { quote: t[1], quote2: t[5] });
         }
@@ -2628,7 +2699,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
         ui.end({ title: score >= 4 ? G('Sharp eyes!', 'عين فاحصة!') : G('Good practice!', 'تدريب جيد!'),
           lines: [G('Your score:', 'نتيجتك:')], extra: sc,
           lesson: G('Tricky thoughts follow patterns. Naming the pattern is the first step to loosening it.', 'للأفكار المخادعة أنماط. وتسمية النمط أولى خطوات إضعافه.'),
-          step: 'Next time I catch a harsh thought, I will ask: is this a fact or a guess?', talk: 'I played Reframe Roulette and I would like to talk about my thoughts.' });
+          signals: { heavy: score <= 1 }, step: 'Next time I catch a harsh thought, I will ask: is this a fact or a guess?', talk: 'I played Reframe Roulette and I would like to talk about my thoughts.' });
       } },
     { id: 'gratitude', title: G('Three Good Things', 'ثلاثة أشياء جيدة'), tag: G('Low mood', 'المزاج المنخفض'), mins: 2,
       blurb: G('Notice what is still going right. It trains your attention gently.', 'لاحظ ما لا يزال يسير على ما يرام. هذا يدرّب انتباهك بلطف.'),
@@ -2663,7 +2734,7 @@ button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease
   function openGame(id) {
     const g = gameById(id); if (!g) { openGames(); return; }
     openPage(g.title, 'games', function (b) {
-      const ui = gameUI(b, g.total);
+      const ui = gameUI(b, g.total, g.id);
       g.run(ui).catch(function (e) { console.error(e); b.appendChild(el('p', 'gp', G('Something went wrong with this game. Please try another one.', 'حدث خطأ في هذه اللعبة. يُرجى تجربة لعبة أخرى.'))); });
     });
   }
