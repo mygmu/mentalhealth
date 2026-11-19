@@ -322,6 +322,105 @@ header h1{white-space:nowrap}
 .vlist{max-height:34vh;overflow-y:auto}
 #vstatus{margin:0;color:#cfe3e0;font-size:.88rem}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== design refresh v3: calmer depth, clearer hierarchy, icon navigation, mind games ===== */
+:root{--r:18px;--sh1:0 1px 3px rgba(22,52,58,.08);--sh2:0 10px 28px rgba(22,52,58,.12);--ease:cubic-bezier(.2,.7,.2,1)}
+body{background:radial-gradient(1200px 520px at 85% -10%,#D7EEE8 0%,transparent 60%),radial-gradient(900px 480px at -10% 30%,#F8EBD3 0%,transparent 55%),linear-gradient(180deg,#EEF7F4 0%,#F8FBFA 60%,#FCF6EA 100%);background-attachment:fixed}
+.app{border-radius:0;background:rgba(255,255,255,.55);backdrop-filter:blur(6px)}
+.hometitle{font-size:1.7rem;letter-spacing:-.01em;line-height:1.2}
+.lead{margin:0 0 4px}
+button,.btn,.need,.gcard,.gopt,.gpill,.chip{transition:transform .16s var(--ease),box-shadow .2s var(--ease),background .2s,border-color .2s,color .2s}
+:focus-visible{outline:3px solid #E9A93B;outline-offset:2px}
+.btn{border-radius:14px;min-height:46px}
+.card{border-radius:var(--r);box-shadow:var(--sh1);border:1px solid var(--line);background:#fff}
+.needs{gap:12px}
+.need{border-radius:20px;min-height:104px;padding:16px;box-shadow:var(--sh1);font-size:1rem}
+.need svg{width:40px;height:40px;padding:8px;border-radius:13px;background:#DDF0EB;stroke:#1C6B64}
+.need:nth-child(2) svg{background:#E8E1F7;stroke:#5B4A9B}
+.need:nth-child(3) svg{background:#FCEBCB;stroke:#9A6A12}
+.need:nth-child(4) svg{background:#F9DDDA;stroke:#A2433A}
+.need:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.need.wide{background:linear-gradient(135deg,#2A8A82,#1C6B64);box-shadow:0 8px 20px rgba(28,107,100,.28)}
+.need.wide svg{background:rgba(255,255,255,.2);stroke:#fff}
+/* icon navigation */
+#nav{grid-template-columns:repeat(4,1fr);background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:4px 6px calc(4px + env(safe-area-inset-bottom));gap:4px;box-shadow:0 -6px 18px rgba(22,52,58,.05)}
+#nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:54px;border:0;border-radius:14px;padding:6px 2px;font-size:.74rem}
+#nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#nav button.on{background:#DDF0EB;color:#14524C}
+#nav button:active{transform:scale(.95)}
+/* mind games */
+.gic{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#DDF0EB}
+.gic svg{width:26px;height:26px;fill:none;stroke:#1C6B64;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gic.friend{background:#F9DDDA}.gic.friend svg{stroke:#A2433A}
+.gic.zoomout{background:#DCEBF8}.gic.zoomout svg{stroke:#2B6396}
+.gic.compass{background:#FCEBCB}.gic.compass svg{stroke:#9A6A12}
+.gic.control{background:#E8E1F7}.gic.control svg{stroke:#5B4A9B}
+.gic.reframe{background:#DDF0EB}
+.gic.gratitude{background:#FFF0C2}.gic.gratitude svg{stroke:#9A6A12}
+.gpromo{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border-radius:20px;border:1.5px solid #EBD9B0;background:linear-gradient(135deg,#FFF6E0,#FBEBC8);cursor:pointer;box-shadow:var(--sh1);color:var(--tide)}
+.gpromo:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.gpromo .gtx{flex:1;display:flex;flex-direction:column;gap:2px}
+.gpromo .gtx b{font-size:1.02rem}
+.gpromo .gtx span{font-size:.88rem;color:#5E5230}
+.gpromo i{font-style:normal;font-size:1.6rem;color:#9A6A12}
+[dir=rtl] .gpromo{text-align:right}[dir=rtl] .gpromo i{transform:scaleX(-1)}
+.glist{display:grid;gap:12px;margin-top:10px}
+@media(min-width:640px){.glist{grid-template-columns:1fr 1fr}}
+.gcard{display:flex;gap:14px;align-items:flex-start;text-align:left;padding:14px;border:1.5px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;box-shadow:var(--sh1);color:var(--tide)}
+.gcard:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--lagoon)}
+.gcard .gtx{display:flex;flex-direction:column;gap:4px}
+.gcard .gtx b{font-size:1.02rem}
+.gcard .gtx span{font-size:.9rem;color:var(--muted);line-height:1.4}
+.gcard .gtx em{font-style:normal;font-size:.76rem;font-weight:700;color:#1C6B64;background:#DDF0EB;border-radius:999px;padding:2px 10px;align-self:flex-start;margin-top:2px}
+[dir=rtl] .gcard{text-align:right}
+.gdots{display:flex;gap:6px;margin:6px 0 12px}
+.gdots i{flex:1;height:6px;border-radius:6px;background:var(--line);transition:background .3s}
+.gdots i.on{background:var(--lagoon)}
+.gstage{min-height:240px}
+.gstage.pop{animation:gpop .32s var(--ease)}
+@keyframes gpop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.gcardx{display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:var(--sh2)}
+.gq{margin:0;font-size:1.12rem;line-height:1.4}
+.gp{margin:0;line-height:1.55}
+.gquote{margin:0;padding:10px 14px;border-left:4px solid var(--sun);background:#FFF8E6;border-radius:0 12px 12px 0;color:#4A3F1E;font-style:italic;overflow-wrap:anywhere;white-space:pre-wrap}
+[dir=rtl] .gquote{border-left:0;border-right:4px solid var(--sun);border-radius:12px 0 0 12px}
+.gta{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:14px;padding:12px;font:inherit;background:#FBFDFC;resize:vertical}
+.gta:focus{border-color:var(--lagoon);outline:none;box-shadow:0 0 0 3px rgba(35,118,111,.2)}
+.gopts{display:flex;flex-direction:column;gap:10px}
+.gopt{min-height:52px;text-align:left;padding:12px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font:inherit;line-height:1.4;cursor:pointer;color:var(--tide)}
+.gopt:hover{border-color:var(--lagoon);background:#F1F9F7;transform:translateY(-1px)}
+[dir=rtl] .gopt{text-align:right}
+.gpills{display:flex;flex-wrap:wrap;gap:8px}
+.gpill{min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:inherit;cursor:pointer;color:var(--tide)}
+.gpill.on{background:var(--lagoon);border-color:var(--lagoon);color:#fff}
+.gscale{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.gscale input{width:100%;accent-color:var(--lagoon);height:36px}
+.gval{align-self:center;font:600 2rem/1 'Newsreader',Georgia,serif;color:var(--lagoon)}
+.gends{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+.gres{position:relative;overflow:hidden}
+.gspark{position:absolute;inset:-40% -20% auto auto;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(233,169,59,.35),transparent 65%);animation:gglow 3.2s ease-in-out infinite alternate;pointer-events:none}
+@keyframes gglow{from{transform:scale(.9);opacity:.6}to{transform:scale(1.1);opacity:1}}
+.glesson{margin:0;padding:12px 14px;border-radius:14px;background:#EAF4F1;color:#14524C;font-weight:600;line-height:1.5}
+.grow{display:flex;flex-wrap:wrap;gap:8px}
+.gvals{display:flex;flex-direction:column;gap:8px}
+.gval2{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:14px;background:#F4FAF8;border:1px solid var(--line)}
+.gval2 b{color:#14524C}.gval2 span{color:var(--muted);font-size:.92rem}
+.gbars{display:flex;flex-direction:column;gap:8px}
+.gbar{display:grid;grid-template-columns:70px 1fr;gap:10px;align-items:center;font-size:.88rem}
+.gbar b{display:block;height:12px;border-radius:12px;background:var(--line);overflow:hidden}
+.gbar i{display:block;height:100%;border-radius:12px;background:linear-gradient(90deg,#E9A93B,#2A8A82);transition:width .6s var(--ease)}
+.gcircles{display:flex;flex-direction:column;gap:10px}
+.gcirc{padding:12px 14px;border-radius:16px;display:flex;flex-direction:column;gap:6px}
+.gcirc.c0{background:#DDF0EB}.gcirc.c1{background:#FCEBCB}.gcirc.c2{background:#E8E1F7}
+.gcirc b{font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+.gcirc em{font-style:normal;font-size:.9rem;color:#38494D}
+.gtag{background:#fff;border-radius:10px;padding:6px 10px;overflow-wrap:anywhere}
+.gscore b{font:700 2.6rem/1 'Newsreader',Georgia,serif;color:var(--lagoon)}
+.goffer{border-color:#EBD9B0;background:linear-gradient(135deg,#FFFBF0,#FFF3D6)}
+.goffer .gq{font-size:1.05rem}
+.grow .btn:not(.ghost){background:var(--lagoon);color:#fff}
+.grow .btn:not(.ghost):disabled{background:#9DB8B5}
+@media (prefers-reduced-motion:reduce){.gstage.pop,.gspark{animation:none}.need:hover,.gcard:hover,.gpromo:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -400,9 +499,10 @@ header h1{white-space:nowrap}
     </div>
   </footer>
   <nav id="nav" aria-label="Main" hidden>
-    <button type="button" data-tab="home">Home</button>
-    <button type="button" data-tab="talk">Talk</button>
-    <button type="button" data-tab="me">My plan</button>
+    <button type="button" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button>
+    <button type="button" data-tab="talk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg><span>Talk</span></button>
+    <button type="button" data-tab="games"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M16 8l-2 6-6 2 2-6z"/></svg><span>Play</span></button>
+    <button type="button" data-tab="me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><span>My plan</span></button>
   </nav>
 </div>
 
@@ -637,7 +737,7 @@ header h1{white-space:nowrap}
   }
   function ttsFetch(text, emotion) {
     const key = Voice.lang + '|' + emotion + '|' + text;
-    if (Aud.cache[key]) return Promise.resolve(Aud.cache[key]);
+    if (Aud.cache[key]) return Promise.resolve(Aud.cache[key]).catch(function () { delete Aud.cache[key]; return ttsFetch(text, emotion); });
     return run('speak', { text: text, lang: Voice.lang, emotion: emotion }).then(function (r) {
       const bin = atob(r.audio), u8 = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
@@ -686,16 +786,16 @@ header h1{white-space:nowrap}
     const fallback = function () { Aud.src = null; browserSpeak(clean, my, em, finish); levelLoop(); };
     if (S.cfg && S.cfg.ttsOn && Voice.natural && Date.now() > Aud.down && audCtx()) {
       const first = (clean.match(/^[^.!?\u061F\u0964]{1,140}[.!?\u061F\u0964]?/) || [clean])[0].trim(), rest = clean.slice(first.length).trim();
-      const chunks = [first].concat(rest ? chunkText(rest, 240) : []), P = [];
+      const chunks = [first].concat(rest ? chunkText(rest, S.cfg && S.cfg.ttsFast ? 190 : 240) : []), P = [];
       const getP = function (j) { if (j < chunks.length && !P[j]) P[j] = ttsFetch(chunks[j], em); return P[j]; };
       const play = function (j) {
         if (my !== Voice.token) return;
         if (j >= chunks.length) { finish(); return; }
         getP(j).then(function (buf) {
           if (my !== Voice.token) return;
-          const nx = getP(j + 1); if (nx) nx.catch(function () {});
+          [1, 2].forEach(function (d) { const nx = getP(j + d); if (nx) nx.catch(function () {}); });
           const src = audCtx().createBufferSource(); src.buffer = buf; src.connect(Aud.an); Aud.src = src;
-          src.onended = function () { if (my === Voice.token) { Aud.src = null; setTimeout(function () { play(j + 1); }, 140); } };
+          src.onended = function () { if (my === Voice.token) { Aud.src = null; setTimeout(function () { play(j + 1); }, S.cfg && S.cfg.ttsFast ? 30 : 140); } };
           src.start(); levelLoop();
         }).catch(function () {
           if (my !== Voice.token) return;
@@ -705,6 +805,32 @@ header h1{white-space:nowrap}
       };
       play(0);
     } else fallback();
+  }
+  /* Audio that arrived together with the reply is decoded straight away, so the first words start with no extra round trip. */
+  function preloadSpeech(text, b64, emotion) {
+    try {
+      const ctx = audCtx(), clean = cleanSpeech(text); if (!ctx || !b64 || !clean) return;
+      const bin = atob(b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      const key = Voice.lang + '|' + (emotion || 'warm') + '|' + clean;
+      const pr = new Promise(function (ok, no) { ctx.decodeAudioData(u8.buffer, ok, no); });
+      pr.catch(function () { if (Aud.cache[key] === pr) delete Aud.cache[key]; });
+      Aud.cache[key] = pr; Aud.order.push(key);
+    } catch (e) {}
+  }
+  /* Short spoken acknowledgements, fetched once, played at once when a reply is slow, so the student is never met with silence. */
+  const Filler = { bank: {}, p: null, i: 0 };
+  function fillerList() { return Voice.lang.indexOf('ar') === 0 ? ['حسنًا، أسمعك.', 'لحظة، دعني أفكر.'] : ['Mm-hm, I hear you.', 'Okay, let me think about that.']; }
+  function warmFillers() {
+    if (!(S.cfg && S.cfg.ttsOn && S.cfg.ttsFast && Voice.natural && audCtx())) return;
+    fillerList().forEach(function (t) { const k = Voice.lang + '|' + t; if (!Filler.bank[k]) Filler.bank[k] = ttsFetch(t, 'warm').catch(function () { delete Filler.bank[k]; return null; }); });
+  }
+  function playFiller() {
+    const list = fillerList(), t = list[Filler.i++ % list.length], pr = Filler.bank[Voice.lang + '|' + t];
+    if (!pr || Voice.speaking) return null;
+    return pr.then(function (b) {
+      const ctx = audCtx(); if (!b || !ctx) return;
+      return new Promise(function (ok) { const src = ctx.createBufferSource(); src.buffer = b; src.connect(Aud.an); src.onended = ok; src.start(); });
+    }).catch(function () {});
   }
   function speak(text) {
     if (!S.voiceOn) return;
@@ -786,7 +912,7 @@ header h1{white-space:nowrap}
 
   function startListening() {
     if (!SR || Voice.listening || $('mic').disabled) return;
-    stopSpeaking();
+    stopSpeaking(); warmFillers();
     const r = new SR(); Voice.rec = r;
     r.lang = Voice.lang; r.interimResults = true; r.continuous = false;
     let finalText = '', heard = '', failed = false, silence = 0;
@@ -821,7 +947,7 @@ header h1{white-space:nowrap}
       const t = (finalText.trim() || heard);
       if (t) {
         setNote('');
-        if (S.voiceOn) { $('msg').value = ''; send(t); } else $('msg').focus();
+        if (S.voiceOn) { $('msg').value = ''; Voice.viaMic = true; send(t); } else $('msg').focus();
       } else if (!failed) setNote('');
     };
     try { r.start(); } catch (e) { Voice.listening = false; Voice.rec = null; }
@@ -948,6 +1074,7 @@ header h1{white-space:nowrap}
     const um = text.match(/https?:\/\/\S+/);
     if (um && (ytId(um[0]) || ytList(um[0]))) { openVideo(um[0], 'Video'); say('Playing it here. Use the close button when you are finished.'); return true; }
     if (/\b(watch|video|videos|youtube)\b/.test(t) && /\b(play|watch|show|open|see|want|put on|let me)\b/.test(t)) { say('Let me find a few videos that match.'); videoCard(videoQueryFrom(text), true); return true; }
+    if (/\b(mind games?|brain games?|thinking games?)\b/.test(t) || (/\bgames?\b/.test(t) && /\b(play|try|start|show|open|want|let me|give me)\b/.test(t))) { say('Here are a few short mind games. Pick one that feels right.'); openGames(); return true; }
     if (/\b(stop|pause|turn off|switch off|shut off|mute)\b.*\b(sound|music|rain|ocean|waves|noise|audio|wind|fire|track)\b/.test(t) || /^(stop|pause)( it| the sound| the music)?[.!]?$/.test(t.trim())) {
       Sound.stop(); stopTrack(); S.favSound = null; say('Okay, I have stopped it.'); return true;
     }
@@ -984,13 +1111,18 @@ header h1{white-space:nowrap}
     addMsg('user', text); S.history.push({ role: 'user', text: text });
     if (localCommand(text)) { S.busy = false; return; }
     const dots = typing();
+    const viaMic = !!Voice.viaMic; Voice.viaMic = false;
+    let fillT = 0;
+    if (viaMic && S.cfg && S.cfg.ttsFast && Voice.natural) fillT = setTimeout(function () { Filler.p = playFiller(); }, 650);
     try {
       const r = await run('chatTurn', {
         sessionId: S.sessionId, stage: S.phase === 'support' ? 'support' : (S.phase === 'listen' ? 'listen' : (S.phase === 'talk' ? 'talk' : 'aside')),
         history: S.history, known: { scoreBefore: S.scoreBefore }, ctx: { risk: S.risk }, voice: !!S.voiceOn || Companion.full
       });
-      dots.remove();
+      dots.remove(); clearTimeout(fillT);
+      if (Filler.p) { await Promise.race([Filler.p, new Promise(function (ok) { setTimeout(ok, 1300); })]); Filler.p = null; }
       if (r.crisis) { handleUrgent('Crisis language detected during the conversation.'); return; }
+      if (r.audio && r.audioText) preloadSpeech(r.audioText, r.audio, 'warm');
       addMsg('ai', r.reply); S.history.push({ role: 'model', text: r.reply });
       if (r.nextStep) addNode(saveStepChip(r.nextStep));
       if (r.quickReplies && r.quickReplies.length && !r.askScore && !r.suggest && !(S.phase === 'listen' && r.ready) && !r.offerCheckin) showQuick(r.quickReplies);
@@ -1006,11 +1138,12 @@ header h1{white-space:nowrap}
           else if (r.suggest === 'music') setTimeout(openMusicPanel, 900);
           else if (r.suggest === 'technique') setTimeout(openTechniqueMenu, 900);
           else if (r.suggest === 'video') setTimeout(function () { videoCard(r.videoQuery || contextVideoQuery(), true); }, 900);
+          else if (r.suggest === 'game' && r.gameId) setTimeout(function () { gameOffer(r.gameId); }, 900);
           else if (r.offerCheckin && !S.checkinOffered && !S.checkinDone) setTimeout(offerCheckin, 1100);
         }
       }
     } catch (e) {
-      dots.remove(); addMsg('sys', friendlyError(e));
+      dots.remove(); clearTimeout(fillT); addMsg('sys', friendlyError(e));
     } finally { S.busy = false; }
   }
   $('form').onsubmit = function (e) { e.preventDefault(); const v = $('msg').value; $('msg').value = ''; send(v); };
@@ -2248,6 +2381,311 @@ header h1{white-space:nowrap}
     b.style.alignSelf = 'flex-start'; return b;
   }
 
+  /* ---------- mind games: short, playful thinking exercises (reframing, perspective, values) ---------- */
+  const GAME_AR = window.GAME_AR = window.GAME_AR || {};
+  function G(en, ar) { if (ar) GAME_AR[en] = ar; return en; }
+  const GAME_CRISIS = /(kill myself|suicid|end my life|want to die|hurt myself|self[- ]?harm|better off dead|انتحار|أقتل نفسي|اقتل نفسي|أنهي حياتي|أريد أن أموت|إيذاء نفسي|ايذاء نفسي)/i;
+  const GICON = {
+    detective: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    friend: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/>',
+    zoomout: '<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="M16 8l-2 6-6 2 2-6z"/>',
+    control: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    reframe: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>',
+    gratitude: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'
+  };
+  const VALUES = [
+    [G('Perseverance', 'المثابرة'), G('Keep going gently, even when it is slow.', 'واصل بلطف حتى لو كان التقدم بطيئًا.'),
+      [G('Study for just 10 minutes, then stop.', 'ذاكر عشر دقائق فقط ثم توقف.'), G('Write the next small task on a sticky note.', 'اكتب المهمة الصغيرة التالية على ورقة لاصقة.'), G('Tell myself: slow progress is still progress.', 'أقول لنفسي: التقدم البطيء تقدّم أيضًا.')]],
+    [G('Kindness', 'اللطف'), G('Treat others, and yourself, with care.', 'عامل الآخرين ونفسك بعناية ورفق.'),
+      [G('Send a kind message to someone.', 'أرسل رسالة لطيفة إلى أحدهم.'), G('Say one gentle thing to myself.', 'أقول لنفسي كلمة رقيقة واحدة.'), G('Help a classmate with one small thing.', 'أساعد زميلًا في أمر صغير.')]],
+    [G('Honesty', 'الصدق'), G('Be truthful about how you feel and what you need.', 'كن صادقًا بشأن شعورك وما تحتاج إليه.'),
+      [G('Tell one trusted person how I really feel.', 'أخبر شخصًا أثق به بما أشعر به حقًا.'), G('Admit one thing I find hard, to myself.', 'أعترف لنفسي بأمر واحد أجده صعبًا.'), G('Ask for help with one thing.', 'أطلب المساعدة في أمر واحد.')]],
+    [G('Family', 'الأسرة'), G('Stay close to the people who love you.', 'ابقَ قريبًا ممن يحبونك.'),
+      [G('Call or message a family member.', 'أتصل بأحد أفراد أسرتي أو أراسله.'), G('Share a meal or tea with someone at home.', 'أشارك وجبة أو شايًا مع أحد في البيت.'), G('Say thank you to someone in my family.', 'أشكر أحد أفراد أسرتي.')]],
+    [G('Faith', 'الإيمان'), G('Draw strength and peace from what you believe.', 'استمد القوة والسكينة مما تؤمن به.'),
+      [G('Take a quiet moment for prayer or reflection.', 'أخصص لحظة هادئة للدعاء أو التأمل.'), G('Read or listen to something that brings me peace.', 'أقرأ أو أسمع ما يمنحني السكينة.'), G('Step outside for a few minutes of stillness.', 'أخرج بضع دقائق للسكون.')]],
+    [G('Growth', 'النمو'), G('Learn from mistakes and keep improving.', 'تعلّم من الأخطاء وواصل التحسّن.'),
+      [G('Write one thing this setback taught me.', 'أكتب أمرًا واحدًا علمتني إياه هذه الانتكاسة.'), G('Ask a teacher one question I have been avoiding.', 'أسأل معلمًا سؤالًا كنت أتجنبه.'), G('Try one new study method today.', 'أجرّب طريقة مذاكرة جديدة اليوم.')]],
+    [G('Courage', 'الشجاعة'), G('Do the right thing even when you feel afraid.', 'افعل الصواب حتى حين تخاف.'),
+      [G('Do the thing I am avoiding for just two minutes.', 'أفعل ما أتجنبه لمدة دقيقتين فقط.'), G('Speak up about one thing that bothers me.', 'أتحدث عن أمر واحد يزعجني.'), G('Say yes to one small challenge.', 'أقبل تحديًا صغيرًا واحدًا.')]],
+    [G('Balance', 'التوازن'), G('Give rest, study and joy their fair share.', 'امنح الراحة والدراسة والفرح نصيبها العادل.'),
+      [G('Take a 10 minute walk.', 'أمشي عشر دقائق.'), G('Go to bed 30 minutes earlier tonight.', 'أنام الليلة قبل موعدي بنصف ساعة.'), G('Do one thing today just for fun.', 'أفعل شيئًا واحدًا اليوم للمتعة فقط.')]],
+    [G('Gratitude', 'الامتنان'), G('Notice what is good, even on hard days.', 'لاحظ ما هو جيد حتى في الأيام الصعبة.'),
+      [G('Write three things I am thankful for.', 'أكتب ثلاثة أشياء أنا ممتن لها.'), G('Thank someone for something they did.', 'أشكر أحدهم على ما فعله.'), G('Notice one good thing I usually overlook.', 'ألاحظ أمرًا جيدًا أغفل عنه عادة.')]],
+    [G('Service', 'العطاء'), G('Find meaning by helping others.', 'جد المعنى في مساعدة الآخرين.'),
+      [G('Offer help to someone today.', 'أعرض المساعدة على أحدهم اليوم.'), G('Share my notes with a classmate.', 'أشارك ملاحظاتي مع زميل.'), G('Do one small favour without being asked.', 'أقدّم معروفًا صغيرًا دون أن يُطلب مني.')]]
+  ];
+  const TRICKS = [
+    [G('I failed this quiz, so I will fail the whole course.', 'رسبت في هذا الاختبار، إذن سأرسب في المقرر كله.'), G('Catastrophising', 'تضخيم الكارثة'),
+      G('One quiz is one piece of information. I can see what went wrong and adjust.', 'اختبار واحد هو معلومة واحدة. يمكنني أن أرى ما الخطأ وأعدّل.'),
+      G('I am just stupid and should give up.', 'أنا غبي وعليّ أن أستسلم.'), G('It does not matter at all, I will ignore it.', 'لا يهم إطلاقًا، سأتجاهل الأمر.'),
+      G('This trick jumps to the worst case. A fair thought sticks to the facts you actually have.', 'هذه الحيلة تقفز إلى أسوأ احتمال. الفكرة المنصفة تلتزم بالوقائع التي بين يديك.')],
+    [G('If I am not perfect, I am a failure.', 'إن لم أكن مثاليًا فأنا فاشل.'), G('All-or-nothing thinking', 'التفكير بالأبيض والأسود'),
+      G('Good work is not all or nothing. Doing my best is enough, and I can keep improving.', 'العمل الجيد ليس كل شيء أو لا شيء. بذل أقصى ما أستطيع يكفي، ويمكنني أن أتحسن.'),
+      G('I must be perfect or not try at all.', 'يجب أن أكون مثاليًا أو لا أحاول أصلًا.'), G('Nobody can judge me anyway.', 'لا أحد يستطيع الحكم عليّ أصلًا.'),
+      G('Real life has a lot of space between perfect and failed. Most good results live there.', 'في الحياة الواقعية مساحة واسعة بين المثالي والفاشل. وفيها تعيش معظم النتائج الجيدة.')],
+    [G('Everyone thinks I am boring.', 'الجميع يظنون أنني ممل.'), G('Mind reading', 'قراءة الأفكار'),
+      G('I cannot read minds. I can notice how people actually treat me, or simply ask.', 'لا أستطيع قراءة الأفكار. يمكنني أن ألاحظ كيف يعاملني الناس فعلًا، أو أن أسأل.'),
+      G('They all definitely dislike me.', 'هم جميعًا يكرهونني حتمًا.'), G('I will never talk to anyone again.', 'لن أتحدث إلى أحد بعد اليوم.'),
+      G('We guess what others think, and anxiety makes the guesses unkind. Checking the facts is kinder.', 'نحن نخمّن ما يفكر فيه الآخرون، والقلق يجعل التخمين قاسيًا. التحقق من الوقائع ألطف.')],
+    [G('I should be coping better than this.', 'يجب أن أتحمل أفضل من هذا.'), G('Should statements', 'عبارات «يجب»'),
+      G('I am human and this is hard. I can ask what I need, instead of what I should be.', 'أنا إنسان وهذا صعب. يمكنني أن أسأل عمّا أحتاجه بدل ما يجب أن أكونه.'),
+      G('I am weak.', 'أنا ضعيف.'), G('I should just try to feel nothing.', 'عليّ أن أحاول ألا أشعر بشيء.'),
+      G('“Should” turns a hard moment into a verdict on you. “Need” turns it into a next step.', 'كلمة «يجب» تحوّل اللحظة الصعبة إلى حكم عليك. أما «أحتاج» فتحوّلها إلى خطوة تالية.')],
+    [G('Everyone else is doing better than me.', 'الجميع يتقدمون أكثر مني.'), G('Unfair comparison', 'المقارنة غير العادلة'),
+      G('I only see other people’s highlights. I can compare myself to who I was last month.', 'أرى فقط أفضل ما عند الآخرين. يمكنني أن أقارن نفسي بنفسي قبل شهر.'),
+      G('I will never catch up.', 'لن ألحق بهم أبدًا.'), G('They must be cheating.', 'لا بد أنهم يغشّون.'),
+      G('Comparing your inside with everyone else’s outside is never a fair race.', 'مقارنة داخلك بمظهر الآخرين الخارجي ليست سباقًا عادلًا أبدًا.')]
+  ];
+
+  function gameUI(box, total) {
+    const dots = el('div', 'gdots'), stage = el('div', 'gstage');
+    box.appendChild(dots); box.appendChild(stage);
+    let n = 0, tot = 0;
+    const setTotal = function (t) { tot = t; dots.innerHTML = ''; for (let i = 0; i < t; i++) dots.appendChild(el('i')); mark(0); };
+    const mark = function (d) { n = Math.min(tot, n + d); Array.prototype.forEach.call(dots.children, function (x, i) { x.className = i < n ? 'on' : ''; }); dots.setAttribute('aria-label', n + ' / ' + tot); };
+    setTotal(total);
+    const put = function (node) {
+      stage.innerHTML = ''; stage.appendChild(node); stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+      const f = node.querySelector('textarea,input,button'); if (f) { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+      stage.scrollIntoView({ block: 'nearest' });
+    };
+    const card = function (q, opt) {
+      const c = el('div', 'gcardx'); if (q) c.appendChild(el('h3', 'gq', q));
+      if (opt && opt.quote) { const bq = el('blockquote', 'gquote', opt.quote); c.appendChild(bq); }
+      return c;
+    };
+    const ui = {
+      setTotal: setTotal,
+      say: function (text, label, opt) {
+        return new Promise(function (ok) {
+          const c = card(null, opt); c.appendChild(el('p', 'gp', text));
+          if (opt && opt.quote2) c.appendChild(el('blockquote', 'gquote', opt.quote2));
+          if (opt && opt.extra) c.appendChild(opt.extra);
+          c.appendChild(btnEl('btn big', label || G('Continue', 'متابعة'), function () { mark(1); ok(); })); put(c);
+        });
+      },
+      ask: function (q, opt) {
+        opt = opt || {};
+        return new Promise(function (ok) {
+          const c = card(q, opt); const ta = el('textarea', 'gta'); ta.rows = 3; ta.maxLength = 300; ta.setAttribute('aria-label', q);
+          if (opt.ph) ta.placeholder = opt.ph;
+          const go = btnEl('btn big', opt.label || G('Next', 'التالي'), function () {
+            const v = ta.value.trim();
+            if (GAME_CRISIS.test(v)) { handleUrgent('Crisis language detected during a mind game.'); return; }
+            mark(1); ok(v);
+          });
+          go.disabled = true; ta.oninput = function () { go.disabled = ta.value.trim().length < 2; };
+          c.appendChild(ta); c.appendChild(go);
+          if (opt.optional) { const sk = btnEl('btn ghost', G('Skip', 'تخطّي'), function () { mark(1); ok(''); }); c.appendChild(sk); }
+          put(c);
+        });
+      },
+      scale: function (q, opt) {
+        return new Promise(function (ok) {
+          const c = card(q, opt), row = el('div', 'gscale'), r = el('input'); r.type = 'range'; r.min = 0; r.max = 100; r.value = 50; r.setAttribute('aria-label', q);
+          const out = el('output', 'gval', '50%'); r.oninput = function () { out.textContent = r.value + '%'; };
+          const ends = el('div', 'gends'); ends.appendChild(el('span', null, G('Not at all', 'أبدًا'))); ends.appendChild(el('span', null, G('Completely', 'تمامًا')));
+          row.appendChild(out); row.appendChild(r); row.appendChild(ends); c.appendChild(row);
+          c.appendChild(btnEl('btn big', G('Set', 'تأكيد'), function () { mark(1); ok(parseInt(r.value, 10)); })); put(c);
+        });
+      },
+      choose: function (q, options, opt) {
+        return new Promise(function (ok) {
+          const c = card(q, opt), list = el('div', 'gopts');
+          options.forEach(function (o, i) { list.appendChild(btnEl('gopt', o, function () { mark(1); ok(i); })); });
+          c.appendChild(list); put(c);
+        });
+      },
+      multi: function (q, options, max) {
+        return new Promise(function (ok) {
+          const c = card(q), list = el('div', 'gpills'), sel = [];
+          const done = btnEl('btn big', G('Done', 'تم'), function () { mark(1); ok(sel.slice()); }); done.disabled = true;
+          options.forEach(function (o, i) {
+            const b = btnEl('gpill', o, function () {
+              const k = sel.indexOf(i);
+              if (k > -1) sel.splice(k, 1); else if (sel.length < max) sel.push(i); else return;
+              b.classList.toggle('on', sel.indexOf(i) > -1); b.setAttribute('aria-pressed', String(sel.indexOf(i) > -1)); done.disabled = !sel.length;
+            }); b.setAttribute('aria-pressed', 'false'); list.appendChild(b);
+          });
+          c.appendChild(list); c.appendChild(done); put(c);
+        });
+      },
+      end: function (r) {
+        const c = el('div', 'gcardx gres'); c.appendChild(el('div', 'gspark')); c.appendChild(el('h3', 'gq', r.title));
+        (r.lines || []).forEach(function (l) { c.appendChild(el('p', 'gp', l)); });
+        if (r.quote) c.appendChild(el('blockquote', 'gquote', r.quote));
+        if (r.extra) c.appendChild(r.extra);
+        if (r.lesson) { const ls = el('p', 'glesson', r.lesson); c.appendChild(ls); }
+        const row = el('div', 'grow');
+        if (r.step) { const sb = btnEl('btn', G('Save as a small step', 'احفظها كخطوة صغيرة'), function () { addPlanStep(r.step); sb.disabled = true; sb.textContent = G('Saved to my plan', 'حُفظت في خطتي'); }); row.appendChild(sb); }
+        row.appendChild(btnEl('btn ghost', G('Talk about it', 'تحدّث عنها'), function () { goTalk(r.talk || 'I just played a mind game and I would like to talk about it.'); }));
+        row.appendChild(btnEl('btn ghost', G('Another game', 'لعبة أخرى'), openGames));
+        c.appendChild(row); mark(99); put(c);
+        Store.set('gamesPlayed', (Store.get('gamesPlayed', 0) || 0) + 1);
+      }
+    };
+    return ui;
+  }
+
+  const GAMES = [
+    { id: 'detective', title: G('Thought Detective', 'المحقق الذكي'), tag: G('Overthinking', 'الإفراط في التفكير'), mins: 3,
+      blurb: G('Test a worrying thought like a detective, using facts instead of feelings.', 'اختبر فكرة مقلقة كما يفعل المحقق، بالاعتماد على الوقائع لا على المشاعر.'),
+      total: 6, run: async function (ui) {
+        const w = await ui.ask(G('What worrying thought is on your mind right now?', 'ما الفكرة المقلقة التي تشغل بالك الآن؟'), { ph: G('For example: I am going to fail everything.', 'مثال: سأرسب في كل شيء.') });
+        const b1 = await ui.scale(G('How strongly do you believe it right now?', 'ما مدى تصديقك لها الآن؟'), { quote: w });
+        await ui.ask(G('Clue 1: what facts support this thought? Facts only, not feelings.', 'الدليل الأول: ما الوقائع التي تدعم هذه الفكرة؟ وقائع فقط، لا مشاعر.'), { quote: w });
+        await ui.ask(G('Clue 2: what facts do not fit it? Think of times it did not happen, or things you have handled before.', 'الدليل الثاني: ما الوقائع التي لا تتفق معها؟ فكّر في مرات لم يحدث فيها ذلك، أو أمور تجاوزتها من قبل.'), { quote: w });
+        const v = await ui.ask(G('Verdict: write a fairer thought that fits all the clues.', 'الحكم: اكتب فكرة أكثر إنصافًا تناسب كل الأدلة.'), { quote: w });
+        const b2 = await ui.scale(G('Now, how strongly do you believe the original thought?', 'والآن، ما مدى تصديقك للفكرة الأصلية؟'), { quote: w });
+        ui.end({ title: G('Case closed.', 'أُغلقت القضية.'),
+          lines: [b2 < b1 ? G('Your belief in the worry went down. Looking at the facts loosens a thought’s grip.', 'انخفض تصديقك للقلق. النظر إلى الوقائع يخفف قبضة الفكرة.')
+            : G('Your belief did not change much, and that is okay. Thoughts often need a few rounds, and the fairer thought still helps over time.', 'لم يتغير تصديقك كثيرًا، وهذا لا بأس به. تحتاج الأفكار غالبًا إلى عدة جولات، والفكرة الأكثر إنصافًا تفيد مع الوقت.'),
+            G('Your fairer thought:', 'فكرتك الأكثر إنصافًا:')], quote: v,
+          lesson: G('A thought is a guess, not a fact. A good detective checks the evidence before believing it.', 'الفكرة تخمين وليست حقيقة. والمحقق الجيد يفحص الأدلة قبل أن يصدّق.'),
+          step: 'Read my fairer thought once tonight: ' + v.slice(0, 100), talk: 'I played Thought Detective about a worry and I would like to talk it through.' });
+      } },
+    { id: 'friend', title: G('Best-Friend Swap', 'تبادل الصديق'), tag: G('Feeling low', 'الشعور بالإحباط'), mins: 2,
+      blurb: G('We are kinder to friends than to ourselves. Borrow that kindness.', 'نحن ألطف مع أصدقائنا منا مع أنفسنا. استعر هذا اللطف.'),
+      total: 4, run: async function (ui) {
+        const s = await ui.ask(G('What situation, or harsh thought about yourself, are you carrying?', 'ما الموقف، أو الفكرة القاسية عن نفسك، التي تحملها؟'));
+        const f = await ui.ask(G('Imagine a close friend came to you with exactly this. What would you say to them?', 'تخيّل أن صديقًا مقربًا جاءك بالأمر نفسه. ماذا ستقول له؟'), { quote: s });
+        await ui.say(G('Now read your own words slowly. They are true for you too.', 'والآن اقرأ كلماتك ببطء. هي صحيحة بحقك أنت أيضًا.'), G('I read it', 'قرأتها'), { quote: f });
+        const k = await ui.choose(G('How does it feel to hear it?', 'كيف تشعر وأنت تسمعها؟'), [G('A little lighter', 'أخف قليلًا'), G('Strange, but okay', 'غريب، لكن لا بأس'), G('Still heavy', 'ما زالت ثقيلة')]);
+        ui.end({ title: G('Kindness works both ways.', 'اللطف يعمل في الاتجاهين.'),
+          lines: [k === 2 ? G('It is okay if it still feels heavy. That is a good reason to talk it through with someone.', 'لا بأس إن بقيت ثقيلة. وهذا سبب وجيه للحديث مع شخص عنها.') : G('Nicely done. You already know the right words, you just aimed them at someone else.', 'أحسنت. أنت تعرف الكلمات المناسبة، لكنك كنت توجهها لغيرك.'), G('Your words to your friend:', 'كلماتك لصديقك:')],
+          quote: f, lesson: G('Self-compassion is not weakness. Research links it to steadier motivation and less anxiety.', 'التعاطف مع الذات ليس ضعفًا. تربطه الأبحاث بدافعية أكثر ثباتًا وقلق أقل.'),
+          step: 'Say this to myself once today: ' + f.slice(0, 100), talk: 'I played the Best-Friend Swap game and I would like to talk about how I treat myself.' });
+      } },
+    { id: 'zoomout', title: G('Zoom Out', 'انظر من بعيد'), tag: G('Exam stress', 'توتر الامتحانات'), mins: 2,
+      blurb: G('See how big this will look in a week, a year and five years.', 'انظر كم سيبدو الأمر كبيرًا بعد أسبوع وسنة وخمس سنوات.'),
+      total: 5, run: async function (ui) {
+        const c = await ui.ask(G('What is stressing you out right now?', 'ما الذي يضغط عليك الآن؟'));
+        const opts = [G('A lot', 'كثيرًا'), G('Some', 'قليلًا'), G('A little', 'يسيرًا'), G('Hardly at all', 'بالكاد')];
+        const qs = [G('How much will this matter in one week?', 'كم سيهمّ هذا بعد أسبوع؟'), G('How much will this matter in one year?', 'كم سيهمّ هذا بعد سنة؟'), G('How much will this matter in five years?', 'كم سيهمّ هذا بعد خمس سنوات؟')];
+        const vals = [];
+        for (let i = 0; i < 3; i++) vals.push(3 - await ui.choose(qs[i], opts, { quote: c }));
+        const m = await ui.ask(G('Underneath this, what do you care about most? Name one thing that will still matter.', 'في عمق هذا الأمر، ما أكثر ما يهمك؟ اذكر شيئًا سيبقى مهمًا.'), { quote: c });
+        const viz = el('div', 'gbars');
+        [G('1 week', 'أسبوع'), G('1 year', 'سنة'), G('5 years', '5 سنوات')].forEach(function (lab, i) {
+          const r = el('div', 'gbar'); r.appendChild(el('span', null, lab)); const t = el('b'); const f = el('i'); f.style.width = Math.max(6, vals[i] / 3 * 100) + '%'; t.appendChild(f); r.appendChild(t); viz.appendChild(r);
+        });
+        ui.end({ title: G('Bigger picture, calmer mind.', 'صورة أوسع، وعقل أهدأ.'),
+          lines: [G('Here is how much this matters over time, in your own words:', 'هكذا يبدو أثر الأمر مع الزمن، بحسب تقديرك:'), G('And what stays important to you:', 'وما يبقى مهمًا لك:')], quote: m, extra: viz,
+          lesson: G('Stress squeezes the whole future into this one moment. Zooming out gives the rest of your life a vote.', 'يختزل التوتر المستقبل كله في هذه اللحظة. والنظر من بعيد يمنح بقية حياتك صوتًا.'),
+          step: 'Do one small thing today for what matters to me: ' + m.slice(0, 90), talk: 'I played Zoom Out about something that is stressing me and I would like to talk.' });
+      } },
+    { id: 'compass', title: G('Values Compass', 'بوصلة القيم'), tag: G('Direction and meaning', 'الاتجاه والمعنى'), mins: 3,
+      blurb: G('Pick what matters most to you, then take one tiny step in that direction.', 'اختر ما يهمك أكثر، ثم اتخذ خطوة صغيرة في اتجاهه.'),
+      total: 4, run: async function (ui) {
+        const names = VALUES.map(function (v) { return v[0]; });
+        const sel = await ui.multi(G('Choose up to three values that matter most to you right now.', 'اختر حتى ثلاث قيم تهمك أكثر في هذه المرحلة.'), names, 3);
+        const box = el('div', 'gvals');
+        sel.forEach(function (i) { const r = el('div', 'gval2'); r.appendChild(el('b', null, VALUES[i][0])); r.appendChild(el('span', null, VALUES[i][1])); box.appendChild(r); });
+        await ui.say(G('These are your compass points. When things feel foggy, they help you choose the next step.', 'هذه هي نقاط بوصلتك. حين تضبب الأمور، تساعدك على اختيار الخطوة التالية.'), G('Continue', 'متابعة'), { extra: box });
+        let pick = sel[0];
+        if (sel.length > 1) { const k = await ui.choose(G('Which one needs a little attention today?', 'أيٌّ منها يحتاج إلى اهتمام صغير اليوم؟'), sel.map(function (i) { return VALUES[i][0]; })); pick = sel[k]; } else { ui.setTotal(3); }
+        const acts = VALUES[pick][2];
+        const a = await ui.choose(G('Pick one tiny action that lives this value today.', 'اختر فعلًا صغيرًا يجسّد هذه القيمة اليوم.'), acts);
+        const val = el('div', 'gvals'); const r = el('div', 'gval2'); r.appendChild(el('b', null, VALUES[pick][0])); r.appendChild(el('span', null, VALUES[pick][1])); val.appendChild(r);
+        ui.end({ title: G('Your direction for today', 'اتجاهك لهذا اليوم'), lines: [G('Value:', 'القيمة:'), G('Your tiny action:', 'فعلك الصغير:')], extra: val, quote: acts[a],
+          lesson: G('You do not have to feel ready. Small actions that match your values build confidence and meaning, one day at a time.', 'لا يلزم أن تشعر بالاستعداد. الأفعال الصغيرة المنسجمة مع قيمك تبني الثقة والمعنى يومًا بعد يوم.'),
+          step: acts[a], talk: 'I played Values Compass and I would like to talk about what matters to me.' });
+      } },
+    { id: 'control', title: G('Circle of Control', 'دائرة التحكم'), tag: G('Overwhelmed', 'الضغط الشديد'), mins: 3,
+      blurb: G('Sort your worries into what you can control, influence, or let go of.', 'صنّف همومك إلى ما تتحكم فيه وما تؤثر فيه وما تتركه.'),
+      total: 5, run: async function (ui) {
+        const raw = await ui.ask(G('List up to three worries, one on each line.', 'اكتب حتى ثلاثة هموم، كلٌّ في سطر.'), { ph: G('Exam results\nWhat people think\nFinishing my project', 'نتائج الامتحان\nما يظنه الناس\nإنهاء مشروعي') });
+        const items = raw.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 3);
+        ui.setTotal(2 + items.length);
+        const cats = [G('I can control it', 'أستطيع التحكم فيه'), G('I can influence it', 'أستطيع التأثير فيه'), G('I cannot control it', 'لا أستطيع التحكم فيه')];
+        const got = [[], [], []];
+        for (let i = 0; i < items.length; i++) { const k = await ui.choose(G('Which circle does this worry belong to?', 'إلى أي دائرة ينتمي هذا الهمّ؟'), cats, { quote: items[i] }); got[k].push(items[i]); }
+        let step = '', ex = el('div', 'gcircles');
+        const tips = [G('Make it a tiny plan: what is the first 5-minute step?', 'اجعله خطة صغيرة: ما أول خطوة من خمس دقائق؟'), G('Do your part, then let the rest go.', 'قم بدورك ثم اترك الباقي.'), G('Practise letting go: breathe out slowly and come back to what you can do.', 'تدرّب على التخلي: ازفر ببطء وعد إلى ما تستطيع فعله.')];
+        if (got[0].length) step = await ui.ask(G('What is the first 5-minute step for this worry?', 'ما أول خطوة من خمس دقائق لهذا الهمّ؟'), { quote: got[0][0] }); else ui.setTotal(1 + items.length);
+        cats.forEach(function (cname, k) {
+          if (!got[k].length) return; const d = el('div', 'gcirc c' + k); d.appendChild(el('b', null, cname));
+          got[k].forEach(function (x) { d.appendChild(el('span', 'gtag', x)); }); d.appendChild(el('em', null, tips[k])); ex.appendChild(d);
+        });
+        ui.end({ title: G('Your energy, well spent.', 'طاقتك في موضعها الصحيح.'), lines: [G('Here is your map:', 'هذه خريطتك:')], extra: ex,
+          lesson: G('Worry feels productive, but only the first circle responds to effort. Spend your energy there first.', 'يبدو القلق مفيدًا، لكن الدائرة الأولى وحدها تستجيب للجهد. أنفق طاقتك فيها أولًا.'),
+          step: step ? step : 'Choose one thing I can control today and do it for 5 minutes.', talk: 'I played Circle of Control and I would like to talk about my worries.' });
+      } },
+    { id: 'reframe', title: G('Reframe Roulette', 'لعبة إعادة التأطير'), tag: G('Self-criticism', 'نقد الذات'), mins: 3,
+      blurb: G('Spot the tricky thought and pick the more helpful one.', 'اكتشف الفكرة المخادعة واختر الأكثر نفعًا.'),
+      total: 5, run: async function (ui) {
+        let score = 0;
+        for (let i = 0; i < TRICKS.length; i++) {
+          const t = TRICKS[i], opts = [[t[2], 1], [t[3], 0], [t[4], 0]].sort(function () { return Math.random() - 0.5; });
+          const k = await ui.choose(G('Which reply to this thought helps more?', 'أيّ رد على هذه الفكرة أنفع؟'), opts.map(function (o) { return o[0]; }), { quote: t[0] });
+          const ok = opts[k][1] === 1; if (ok) score++;
+          await ui.say(ok ? G('Yes, that one is fairer.', 'نعم، هذه أكثر إنصافًا.') : G('Not quite. That one feels true but is a trick.', 'ليس تمامًا. تلك تبدو صحيحة لكنها حيلة.'),
+            i === TRICKS.length - 1 ? G('See my result', 'أرِني نتيجتي') : G('Next thought', 'الفكرة التالية'), { quote: t[1], quote2: t[5] });
+        }
+        const sc = el('div', 'gscore'); sc.appendChild(el('b', null, score + ' / ' + TRICKS.length));
+        ui.end({ title: score >= 4 ? G('Sharp eyes!', 'عين فاحصة!') : G('Good practice!', 'تدريب جيد!'),
+          lines: [G('Your score:', 'نتيجتك:')], extra: sc,
+          lesson: G('Tricky thoughts follow patterns. Naming the pattern is the first step to loosening it.', 'للأفكار المخادعة أنماط. وتسمية النمط أولى خطوات إضعافه.'),
+          step: 'Next time I catch a harsh thought, I will ask: is this a fact or a guess?', talk: 'I played Reframe Roulette and I would like to talk about my thoughts.' });
+      } },
+    { id: 'gratitude', title: G('Three Good Things', 'ثلاثة أشياء جيدة'), tag: G('Low mood', 'المزاج المنخفض'), mins: 2,
+      blurb: G('Notice what is still going right. It trains your attention gently.', 'لاحظ ما لا يزال يسير على ما يرام. هذا يدرّب انتباهك بلطف.'),
+      total: 4, run: async function (ui) {
+        const g = [];
+        const qs = [G('Good thing 1: something small that went well today or this week.', 'الأمر الجيد الأول: شيء صغير سار على ما يرام اليوم أو هذا الأسبوع.'), G('Good thing 2: someone or something you appreciate.', 'الأمر الجيد الثاني: شخص أو شيء تقدّره.'), G('Good thing 3: something you handled, even a little.', 'الأمر الجيد الثالث: شيء تعاملت معه ولو قليلًا.')];
+        for (let i = 0; i < 3; i++) g.push(await ui.ask(qs[i], { ph: G('Anything counts.', 'أي شيء يصلح.') }));
+        const w = await ui.ask(G('Which one happened because of you, or someone you love? What does that say about you?', 'أيٌّ منها حدث بفضلك أو بفضل شخص تحبه؟ وماذا يقول ذلك عنك؟'));
+        const ls = el('div', 'gvals'); g.forEach(function (x) { const r = el('div', 'gval2'); r.appendChild(el('span', null, x)); ls.appendChild(r); });
+        const old = Store.get('goods', []); Store.set('goods', [{ t: Date.now(), g: g }].concat(old).slice(0, 30));
+        ui.end({ title: G('Good things, noticed.', 'أشياء جيدة، تمّت ملاحظتها.'), lines: [G('Your list:', 'قائمتك:')], extra: ls, quote: w,
+          lesson: G('The mind remembers problems faster than good moments. Writing them down balances the scale.', 'يتذكر العقل المشكلات أسرع من اللحظات الجيدة. والكتابة تعيد التوازن.'),
+          step: 'Tonight, notice one more good thing before I sleep.', talk: 'I played Three Good Things and I would like to talk about my week.' });
+      } }
+  ];
+
+  function gameById(id) { return GAMES.filter(function (g) { return g.id === id; })[0]; }
+  function gIcon(id) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (GICON[id] || GICON.compass) + '</svg>'; }
+  function openGames() {
+    openPage(G('Mind games', 'ألعاب العقل'), 'games', function (b) {
+      b.appendChild(el('p', 'lead', G('A mind game is a short thinking exercise, about two or three minutes. You stay in charge and can stop at any time.', 'لعبة العقل تمرين تفكير قصير، نحو دقيقتين أو ثلاث. أنت المتحكم ويمكنك التوقف في أي وقت.')));
+      const list = el('div', 'glist');
+      GAMES.forEach(function (g) {
+        const c = btnEl('gcard', '', function () { openGame(g.id); });
+        c.innerHTML = '<span class="gic ' + g.id + '">' + gIcon(g.id) + '</span><span class="gtx"><b></b><span></span><em></em></span>';
+        c.querySelector('b').textContent = g.title; c.querySelector('.gtx>span').textContent = g.blurb; c.querySelector('em').textContent = g.tag;
+        list.appendChild(c);
+      });
+      b.appendChild(list);
+    });
+  }
+  function openGame(id) {
+    const g = gameById(id); if (!g) { openGames(); return; }
+    openPage(g.title, 'games', function (b) {
+      const ui = gameUI(b, g.total);
+      g.run(ui).catch(function (e) { console.error(e); b.appendChild(el('p', 'gp', G('Something went wrong with this game. Please try another one.', 'حدث خطأ في هذه اللعبة. يُرجى تجربة لعبة أخرى.'))); });
+    });
+  }
+  /* The guide can offer one game in the chat; the student decides. */
+  function gameOffer(id) {
+    const g = gameById(id); if (!g) return;
+    const c = el('div', 'card goffer');
+    c.appendChild(el('span', 'step', G('Mind game', 'لعبة عقلية')));
+    c.appendChild(el('h3', 'gq', g.title)); c.appendChild(el('p', null, g.blurb));
+    const row = el('div', 'row');
+    row.appendChild(btnEl('btn', G('Play now', 'العب الآن'), function () { openGame(id); }));
+    row.appendChild(btnEl('btn ghost', G('Not now', 'ليس الآن'), function () { c.remove(); }));
+    c.appendChild(row); addNode(c);
+  }
+  function gamesCard() {
+    const b = btnEl('gpromo', '', openGames);
+    b.innerHTML = '<span class="gic compass">' + gIcon('compass') + '</span><span class="gtx"><b></b><span></span></span><i aria-hidden="true">&rsaquo;</i>';
+    b.querySelector('b').textContent = G('Mind games', 'ألعاب العقل'); b.querySelector('.gtx>span').textContent = G('Two-minute games that shift how you see things', 'ألعاب من دقيقتين تغيّر نظرتك للأمور');
+    return b;
+  }
+
+
   /* ---------- home ---------- */
   const MOODS = [[1, 'Very low'], [2, 'Low'], [3, 'Okay'], [4, 'Good'], [5, 'Very good']];
   function moodName(v) { const m = MOODS.filter(function (x) { return x[0] === v; })[0]; return m ? m[1] : ''; }
@@ -2288,6 +2726,8 @@ header h1{white-space:nowrap}
     talk.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg><span></span>';
     talk.lastChild.textContent = 'Something else, I just want to talk'; needs.appendChild(talk);
     h.appendChild(needs);
+
+    h.appendChild(gamesCard());
 
     // Notice a pattern: several low days in a row deserves a gentle nudge towards a person.
     const moods = Store.get('moods', []);
@@ -2690,7 +3130,7 @@ header h1{white-space:nowrap}
   document.querySelectorAll('#nav button').forEach(function (nb) {
     nb.onclick = function () {
       const t = nb.getAttribute('data-tab');
-      if (t === 'home') showView('home'); else if (t === 'talk') showView('talk');
+      if (t === 'home') showView('home'); else if (t === 'talk') showView('talk'); else if (t === 'games') openGames();
       else if (t === 'calm') openCalm(); else if (t === 'journal') openJournal(); else openMe();
     };
   });
@@ -2725,10 +3165,11 @@ header h1{white-space:nowrap}
   /* ---------- Arabic (right-to-left) support: interface, AI replies and voice ---------- */
   (function () {
     const DICT = {"Calm Room": "غرفة الهدوء", "Student wellbeing support": "دعم رفاهية الطلبة", "Urgent help": "مساعدة عاجلة", "A calm, private space to talk.": "مساحة هادئة وخاصة للحديث.", "I am here to listen and to help with whatever is on your mind, from exams and studies to family, friendships or just a hard day. You can stay completely anonymous, or share your details so the counsellor can follow up. Whenever you need a person, I will help you reach one.": "أنا هنا لأصغي إليك ولأساعدك في أي أمر يشغل بالك، من الامتحانات والدراسة إلى الأسرة والصداقات، أو حتى يوم صعب فحسب. يمكنك أن تبقى مجهول الهوية تمامًا، أو أن تشارك بياناتك ليتمكن المرشد من المتابعة معك. وحين تحتاج إلى شخص حقيقي، سأساعدك في الوصول إليه.", "Read the full policy and privacy notice": "اقرأ السياسة وإشعار الخصوصية كاملين", "How would you like to continue?": "كيف تودّ أن تتابع؟", "Continue anonymously.": "المتابعة دون ذكر الاسم.", "I will not share my name. My privacy is kept.": "لن أشارك اسمي. خصوصيتي محفوظة.", "Share my details.": "مشاركة بياناتي.", "So the counsellor can follow up if needed.": "ليتمكن المرشد من المتابعة معي عند الحاجة.", "Name": "الاسم", "Student ID": "الرقم الجامعي", "Programme and year (optional)": "البرنامج والسنة الدراسية (اختياري)", "Email or phone (optional)": "البريد الإلكتروني أو الهاتف (اختياري)", "I am 18 years old or older.": "عمري 18 عامًا أو أكثر.", "I have read the policy and privacy notice above, and I agree to take part.": "لقد قرأت السياسة وإشعار الخصوصية أعلاه، وأوافق على المشاركة.", "Begin": "ابدأ", "Send": "إرسال", "Relax with sound": "استرخِ مع الأصوات", "Find calming music": "ابحث عن موسيقى مهدّئة", "Try a calming technique": "جرّب تقنية تهدئة", "My takeaway": "خلاصتي", "Talk to a counsellor": "تحدّث إلى مرشد", "Voice language": "لغة الصوت", "Home": "الرئيسية", "Talk": "تحدّث", "Calm": "هدوء", "Journal": "اليوميات", "My plan": "خطتي", "You are not alone": "لست وحدك", "Ask the counselling team to contact me": "اطلب من فريق الإرشاد التواصل معي", "My safety plan": "خطة سلامتي", "Close": "إغلاق", "Session progress": "تقدّم الجلسة", "Your name": "اسمك", "Your student ID": "رقمك الجامعي", "e.g. MBBS, Year 2": "مثال: الطب والجراحة، السنة الثانية", "So the counsellor can reach you": "ليتمكن المرشد من التواصل معك", "Your message": "رسالتك", "Speak your message": "انطق رسالتك", "Main": "الرئيسية", "Over the last 2 weeks, how often have you been bothered by the following?": "خلال الأسبوعين الماضيين، كم مرة أزعجتك الأمور التالية؟", "Not at all": "أبدًا", "Several days": "عدة أيام", "More than half the days": "أكثر من نصف الأيام", "Nearly every day": "تقريبًا كل يوم", "I would rather not answer": "أفضّل ألا أجيب", "In the past few weeks, have you wished you were dead?": "في الأسابيع القليلة الماضية، هل راودتك أمنية الموت؟", "In the past few weeks, have you felt that you or your family would be better off if you were dead?": "في الأسابيع القليلة الماضية، هل شعرت بأن حال أسرتك أو حالك سيكون أفضل لو لم تكن على قيد الحياة؟", "In the past week, have you been having thoughts about killing yourself?": "في الأسبوع الماضي، هل راودتك أفكار حول قتل نفسك؟", "Have you ever tried to kill yourself?": "هل سبق أن حاولت قتل نفسك؟", "Little interest or pleasure in doing things": "قلة الاهتمام أو الاستمتاع بالقيام بالأشياء", "Feeling down, depressed, or hopeless": "الشعور بالإحباط أو الاكتئاب أو فقدان الأمل", "Trouble falling or staying asleep, or sleeping too much": "صعوبة في النوم أو البقاء نائمًا، أو النوم أكثر من اللازم", "Feeling tired or having little energy": "الشعور بالتعب أو قلة الطاقة", "Poor appetite or overeating": "ضعف الشهية أو الإفراط في الأكل", "Feeling bad about yourself, or that you are a failure or have let yourself or your family down": "الشعور بالسوء تجاه نفسك، أو بأنك فاشل أو خذلت نفسك أو أسرتك", "Trouble concentrating on things, such as reading or watching television": "صعوبة التركيز في أمور مثل القراءة أو مشاهدة التلفاز", "Moving or speaking so slowly that other people could have noticed, or being so fidgety or restless that you have been moving around a lot more than usual": "التحرك أو الكلام ببطء شديد بحيث يلاحظ الآخرون، أو العكس: التململ والاضطراب حتى صرت تتحرك أكثر من المعتاد بكثير", "Thoughts that you would be better off dead, or of hurting yourself in some way": "أفكار بأنك ستكون أفضل حالًا لو كنت ميتًا، أو بإيذاء نفسك بطريقة ما", "Feeling nervous, anxious or on edge": "الشعور بالتوتر أو القلق أو الانفعال", "Not being able to stop or control worrying": "عدم القدرة على التوقف عن القلق أو التحكم فيه", "Worrying too much about different things": "القلق المفرط حيال أمور مختلفة", "Trouble relaxing": "صعوبة الاسترخاء", "Being so restless that it is hard to sit still": "شدة الاضطراب بحيث يصعب الجلوس بهدوء", "Becoming easily annoyed or irritable": "الانزعاج أو الضيق بسهولة", "Feeling afraid, as if something awful might happen": "الشعور بالخوف كأن أمرًا فظيعًا سيحدث", "Request failed.": "تعذّر إتمام الطلب.", "the university counselling team": "فريق الإرشاد في الجامعة", "Tell me what is on your mind": "أخبرني بما يشغل بالك", "Add a note if you need to": "أضف ملاحظة إن أردت", "Please use the options above": "يُرجى اختيار أحد الخيارات أعلاه", "Start a new session": "بدء جلسة جديدة", "Something went wrong on our side. Please try again.": "حدث خطأ من جانبنا. يُرجى المحاولة مرة أخرى.", "Where is your stress right now?": "ما مستوى توترك الآن؟", "Where is your stress now?": "ما مستوى توترك الآن؟", "1 is calm, 10 is overwhelming.": "الرقم 1 يعني هدوءًا، و10 يعني شعورًا طاغيًا.", "Stress level": "مستوى التوتر", "The microphone is blocked in this view. Please type, or use the voice-enabled page.": "الميكروفون محجوب في هذه النافذة. يُرجى الكتابة، أو استخدام الصفحة الداعمة للصوت.", "Listening. Speak whenever you are ready.": "أستمع إليك. تحدّث متى شئت.", "I did not hear anything. Tap the microphone when you are ready.": "لم أسمع شيئًا. اضغط على الميكروفون حين تكون مستعدًا.", "Voice input stopped. You can type instead.": "توقّف الإدخال الصوتي. يمكنك الكتابة بدلًا من ذلك.", "This browser can read replies aloud, but voice input needs Chrome, Edge or Safari.": "يستطيع هذا المتصفح قراءة الردود بصوت عالٍ، لكن الإدخال الصوتي يتطلب Chrome أو Edge أو Safari.", "Of course. I am here, and there is no rush. What would you like to talk about?": "بالطبع. أنا هنا وليس هناك أي استعجال. عمّ تودّ أن نتحدث؟", "Hello, and welcome. This is a calm, private space, and I am really glad you came. I am here to listen and to help in any way I can, whether it is exams, studies, family, friendships, feeling low, or just a hard day. What is on your mind right now?": "أهلًا بك، ومرحبًا. هذه مساحة هادئة وخاصة، ويسعدني حقًا أنك جئت. أنا هنا لأصغي إليك وأساعدك بكل ما أستطيع، سواء كان الأمر امتحانات أو دراسة أو أسرة أو صداقات أو شعورًا بالحزن، أو حتى يومًا صعبًا. ما الذي يشغل بالك الآن؟", "Not now, let us keep talking": "ليس الآن، لنواصل الحديث", "That is completely fine. I am right here. What else is on your mind?": "لا بأس إطلاقًا. أنا هنا بجانبك. ما الذي يشغل بالك أيضًا؟", "Thank you. I will start with a couple of gentle questions, just to make sure you get the right kind of support. You can choose not to answer any of them.": "شكرًا لك. سأبدأ ببعض الأسئلة اللطيفة، فقط لأتأكد من أنك تحصل على النوع المناسب من الدعم. يمكنك اختيار عدم الإجابة عن أي منها.", "One more question": "سؤال آخر", "Are you having thoughts of killing yourself right now?": "هل تراودك الآن أفكار حول قتل نفسك؟", "Sharing your contact details is your choice. If you prefer, choose Not now and we can carry on.": "مشاركة بيانات التواصل خيارٌ يعود إليك. وإن فضّلت، اختر «ليس الآن» وسنواصل.", "Thank you. These are a few brief, standard questions that counsellors often use. They are not a diagnosis; they just help me see how strongly things have been affecting you.": "شكرًا لك. هذه أسئلة قصيرة وقياسية يستخدمها المرشدون كثيرًا. وهي ليست تشخيصًا؛ بل تساعدني على فهم مدى تأثير الأمور عليك.", "Mood question": "سؤال عن المزاج", "Worry question": "سؤال عن القلق", "Last question": "السؤال الأخير", "Overall, how much have these difficulties affected your studies, sleep or relationships?": "بوجه عام، إلى أي مدى أثّرت هذه الصعوبات على دراستك أو نومك أو علاقاتك؟", "Quite a lot": "كثيرًا", "Scoring was unavailable, so I will recommend speaking with the counselling team to be safe.": "تعذّر احتساب النتيجة، لذا سأوصي بالتحدث إلى فريق الإرشاد احتياطًا لسلامتك.", "Safety check": "فحص السلامة", "You mentioned that thoughts of being better off dead, or of hurting yourself, have come up. Are you having thoughts of killing yourself right now?": "أشعر من حديثك أن أفكارًا عن الموت أو عن إيذاء النفس قد راودتك. هل تراودك الآن أفكار حول قتل نفسك؟", "You can share your contact details so the team can reach you. This is your choice, and you can still continue with the calming exercise afterwards.": "يمكنك مشاركة بيانات التواصل ليتمكن الفريق من الوصول إليك. هذا خيارك، ويمكنك مواصلة تمرين التهدئة بعد ذلك.", "Your answers suggest that you would benefit from speaking with a person soon, ideally within the next one or two working days. I would like to help you request that, and we can still practise a calming skill together in the meantime.": "تشير إجاباتك إلى أنك ستستفيد من التحدث إلى شخص قريبًا، ويُفضّل خلال يوم أو يومي عمل. أودّ مساعدتك في طلب ذلك، ويمكننا في هذه الأثناء أن نتدرّب معًا على مهارة تهدئة.", "Start the guide": "ابدأ الدليل", "Press start when you are ready": "اضغط «ابدأ» حين تكون مستعدًا", "Well done. Let your breathing return to normal.": "أحسنت. دع تنفّسك يعود إلى طبيعته.", "5 things around you": "5 أشياء من حولك", "4 things you can feel": "4 أشياء تشعر بها", "1 thing, or a sip of water": "شيء واحد، أو رشفة ماء", "Guide me through it": "أرشدني خلالها", "A calm body outline that highlights each muscle group in turn.": "مخطط هادئ للجسم يُبرز كل مجموعة عضلية بالتتابع.", "Start the body scan": "ابدأ مسح الجسم", "Start the rhythm": "ابدأ الإيقاع", "Breathe in": "شهيق", "Soft rain": "مطر هادئ", "Ocean waves": "أمواج البحر", "Gentle wind": "رياح لطيفة", "Crackling fire": "نار مشتعلة", "Deep calm": "هدوء عميق", "Your calming sound is ready. It switches off after 10 minutes.": "صوتك المهدّئ جاهز. سيتوقف تلقائيًا بعد 10 دقائق.", "Which sound helps you feel calm? Tap one to play it. It switches off after 10 minutes.": "أي صوت يمنحك الهدوء؟ اضغط على أحدها لتشغيله. سيتوقف تلقائيًا بعد 10 دقائق.", "Let us find a sound that calms you. There is no right answer; just choose whatever feels good.": "لنبحث عن صوت يهدّئك. لا توجد إجابة صحيحة؛ اختر ما تشعر بالارتياح له.", "Music can be a lovely way to settle. What kind do you enjoy when you want to relax? Pick one, or tell me your own below.": "الموسيقى طريقة جميلة للاسترخاء. ما النوع الذي تحبه حين تريد أن ترتاح؟ اختر واحدًا، أو اكتب ما تفضّله أدناه.", "Lo-fi beats": "إيقاعات لو-فاي", "Calm piano": "بيانو هادئ", "Nature sounds": "أصوات الطبيعة", "Soft instrumental": "موسيقى آلية ناعمة", "Find it on YouTube": "ابحث عنها في يوتيوب", "Of course. Here are a few short techniques. Pick whichever feels right, and I will guide you through it slowly.": "بالطبع. إليك بعض التقنيات القصيرة. اختر ما يناسبك، وسأرشدك إليها ببطء.", "Next step": "الخطوة التالية", "I have finished": "انتهيت", "Well done. Notice how your body feels now, even a little. I am still here whenever you want to keep talking.": "أحسنت. لاحظ كيف يبدو جسدك الآن، ولو قليلًا. أنا ما زلت هنا متى أردت مواصلة الحديث.", "Before we do any thinking work, let us give your mind a moment to settle. Press play when you are ready.": "قبل أي عمل تفكير، دعنا نمنح عقلك لحظة ليهدأ. اضغط تشغيل حين تكون مستعدًا.", "Before we do any thinking work, let us settle your body first. Follow the circle with your breath for a minute. Press Start the guide when you are ready.": "قبل أي عمل تفكير، لنُهدّئ جسدك أولًا. تتبّع الدائرة بأنفاسك لمدة دقيقة. اضغط «ابدأ الدليل» حين تكون مستعدًا.", "Breathe out": "زفير", "In-app breathing guide": "دليل التنفس داخل التطبيق", "I did this, show the next step": "فعلتُ ذلك، أرِني الخطوة التالية", "Well done for staying with it. Before we finish, how stressed do you feel now?": "أحسنت لأنك أكملت. قبل أن ننتهي، ما مدى توترك الآن؟", "Sharing your contact details is your choice.": "مشاركة بيانات التواصل خيارٌ يعود إليك.", "Your session is complete. You can return at any time. If things become harder, use Urgent help at the top of the page.": "اكتملت جلستك. يمكنك العودة في أي وقت. وإن اشتدّت الأمور، فاستخدم «مساعدة عاجلة» في أعلى الصفحة.", "Call the Wellbeing Center": "اتصل بمركز الرفاهية", "Message on WhatsApp": "راسل عبر واتساب", "Your name (optional)": "اسمك (اختياري)", "Email or phone number": "البريد الإلكتروني أو رقم الهاتف", "Any time": "في أي وقت", "Not now": "ليس الآن", "Please enter an email address or phone number.": "يُرجى إدخال بريد إلكتروني أو رقم هاتف.", "Please tick the box to agree to be contacted.": "يُرجى وضع علامة في المربع للموافقة على التواصل معك.", "The counselling team will review your request.": "سيراجع فريق الإرشاد طلبك.", "Your request has been sent.": "تم إرسال طلبك.", "Your request has been saved for the counselling team. Please also contact them directly using the details above.": "تم حفظ طلبك لدى فريق الإرشاد. يُرجى أيضًا التواصل معهم مباشرة عبر البيانات أعلاه.", "If you share your contact details, the counselling team is alerted straight away during working hours. Please do not wait for a reply if you are in danger.": "إذا شاركت بيانات التواصل، فسيتم تنبيه فريق الإرشاد فورًا خلال ساعات الدوام. يُرجى ألا تنتظر الرد إذا كنت في خطر.", "Save this step to my plan": "احفظ هذه الخطوة في خطتي", "Saved to my plan": "حُفظت في خطتي", "Very low": "منخفض جدًا", "This is your space. Choose whatever would help most right now.": "هذه مساحتك. اختر ما قد يفيدك أكثر الآن.", "Your small step": "خطوتك الصغيرة", "I did it": "فعلتها", "It was hard, let us talk": "كان الأمر صعبًا، فلنتحدث", "Ask for a counsellor to contact me": "اطلب أن يتواصل معي مرشد", "Talk it through": "تحدّث عنها", "Calm now": "هدوء الآن", "A private, caring conversation about anything on your mind": "محادثة خاصة وحانية حول أي شيء يشغل بالك", "Breathing, sounds and techniques": "التنفس والأصوات والتقنيات", "Write it out, privately": "اكتب بخصوصية تامة", "Small steps and my progress": "خطوات صغيرة وتقدّمي", "Short, clear guides": "أدلة قصيرة وواضحة", "Exam toolkit": "عدّة الامتحانات", "Focus timer and exam-day calm": "مؤقت التركيز وهدوء يوم الامتحان", "Sleep toolkit": "عدّة النوم", "Wind down and rest": "تهيئة النفس للراحة", "A short standard self-check": "فحص ذاتي قياسي قصير", "Safety plan": "خطة السلامة", "For the hardest moments": "للحظات الأصعب", "Your mood, journal and plans are kept only on this device, never on a server.": "مزاجك ويومياتك وخططك محفوظة على هذا الجهاز فقط، ولا تُرسل إلى أي خادم.", "Start with your breath. Follow the circle for a minute or two.": "ابدأ بنَفَسك. تتبّع الدائرة لمدة دقيقة أو دقيقتين.", "Back to Calm": "العودة إلى الهدوء", "Reflect with me": "تأمّل معي", "Writing things down helps the mind let go of them. Your journal stays on this device. Nothing is sent anywhere unless you tap Reflect with me.": "الكتابة تساعد العقل على تفريغ أفكاره. يوميّاتك تبقى على هذا الجهاز، ولا يُرسل شيء إلى أي جهة إلا إذا ضغطت «تأمّل معي».", "Free writing": "كتابة حرة", "Thought record": "سجل الأفكار", "Three good things": "ثلاثة أشياء جيدة", "What is on your mind?": "ما الذي يشغل بالك؟", "Write freely. No one will read this but you.": "اكتب بحرية. لن يقرأ هذا أحد سواك.", "A thought record helps you step back from a painful thought and look at it fairly.": "يساعدك سجل الأفكار على الابتعاد قليلًا عن فكرة مؤلمة والنظر إليها بإنصاف.", "What happened?": "ماذا حدث؟", "The situation, in one sentence": "الموقف في جملة واحدة", "What went through my mind?": "ما الذي خطر في بالي؟", "The thought, in my own words": "الفكرة بكلماتي أنا", "How did I feel?": "بماذا شعرت؟", "For example: anxious, ashamed, angry": "مثل: قلق، خجل، غضب", "A fairer, kinder way to see it": "نظرة أكثر إنصافًا ولطفًا", "What would I say to a friend?": "ماذا كنت سأقول لصديق؟", "Noticing three good things each day, however small, gently trains attention towards what is going well.": "ملاحظة ثلاثة أشياء جيدة كل يوم، مهما كانت صغيرة، تدرّب الانتباه بلطف على ما يسير بشكل جيد.", "One good thing today": "شيء جيد واحد اليوم", "Save to my journal": "احفظ في يومياتي", "Please write something first.": "يُرجى كتابة شيء أولًا.", "Nothing here yet.": "لا يوجد شيء هنا بعد.", "No steps yet. When we talk, I will suggest one small step you can save here.": "لا توجد خطوات بعد. حين نتحدث، سأقترح عليك خطوة صغيرة يمكنك حفظها هنا.", "Add step": "أضف خطوة", "Taller bars are better days. Check in daily from Home to see your pattern.": "الأعمدة الأطول تعني أيامًا أفضل. سجّل مزاجك يوميًا من الصفحة الرئيسية لترى نمطك.", "Check in from Home each day and your pattern will appear here.": "سجّل مزاجك من الصفحة الرئيسية كل يوم وسيظهر نمطك هنا.", "Your mood, journal, plan and safety plan are stored only in this browser on this device. If you use a shared device, delete them when you finish.": "مزاجك ويومياتك وخطتك وخطة سلامتك محفوظة في هذا المتصفح وعلى هذا الجهاز فقط. إذا كنت تستخدم جهازًا مشتركًا، فاحذفها عند الانتهاء.", "Delete my data from this device": "احذف بياناتي من هذا الجهاز", "Short guides from the Student Wellbeing Center. Understanding what is happening is often the first relief.": "أدلة قصيرة من مركز رفاهية الطلبة. فهم ما يحدث هو غالبًا أول أشكال الراحة.", "Guides will appear here soon.": "ستظهر الأدلة هنا قريبًا.", "Talk about this": "تحدّث عن هذا", "More guides": "المزيد من الأدلة", "Focus timer": "مؤقت التركيز", "25 minutes of focus, then a 5 minute break. Short, timed blocks make starting easier.": "25 دقيقة من التركيز ثم استراحة 5 دقائق. الفترات القصيرة المحددة بوقت تجعل البدء أسهل.", "Ready when you are.": "جاهز متى كنت جاهزًا.", "Focus on one task only.": "ركّز على مهمة واحدة فقط.", "Break. Stand up, stretch, breathe.": "استراحة. قف وتمدّد وتنفّس.", "One small step": "خطوة صغيرة واحدة", "When everything feels too much, choose only the very next thing. Make it small enough to start in two minutes.": "حين يبدو كل شيء أكبر من طاقتك، اختر فقط الخطوة التالية مباشرة. اجعلها صغيرة بما يكفي لتبدأ خلال دقيقتين.", "Add to my plan": "أضف إلى خطتي", "Exam-day calm routine": "روتين الهدوء ليوم الامتحان", "The night before: pack what you need and stop revising an hour before bed.": "في الليلة السابقة: جهّز ما تحتاجه وتوقف عن المراجعة قبل النوم بساعة.", "On the day: eat something, arrive a little early, and step away from anxious conversations outside the hall.": "في اليوم نفسه: تناول شيئًا، واحضر مبكرًا قليلًا، وابتعد عن الأحاديث المقلقة خارج القاعة.", "At your desk: breathe out slowly three times before you turn the paper.": "على مقعدك: ازفر ببطء ثلاث مرات قبل أن تفتح ورقة الأسئلة.", "If your mind goes blank: put the pen down, breathe out slowly, and begin with any question you can answer.": "إن فرغ ذهنك: ضع القلم، وازفر ببطء، وابدأ بأي سؤال تستطيع الإجابة عنه.", "Read: exam fear": "اقرأ: الخوف من الامتحان", "Wind-down checklist": "قائمة تهيئة النوم", "Screens away an hour before bed": "أبعد الشاشات قبل النوم بساعة", "Lights low and the room cool": "إضاءة خافتة وغرفة باردة", "Tomorrow’s tasks written down": "اكتب مهام الغد", "No caffeine since the afternoon": "لا كافيين منذ فترة العصر", "The same wake-up time planned for tomorrow": "وقت استيقاظ ثابت مخطط له للغد", "Park your worries": "أجّل همومك", "Write down whatever is circling in your mind. Once it is on the page, your mind no longer has to hold it overnight.": "اكتب كل ما يدور في بالك. وحين يصبح على الورق، لن يضطر ذهنك إلى حمله طوال الليل.", "Everything I am worried about tonight...": "كل ما يقلقني الليلة...", "Park these until morning": "أجّل هذه حتى الصباح", "Worry list": "قائمة الهموم", "Read: when you cannot sleep": "اقرأ: حين يعجز النوم", "1. My warning signs": "1. علامات الإنذار لديّ", "Thoughts, moods or situations that tell me things are getting harder": "أفكار أو مشاعر أو مواقف تخبرني أن الأمور تزداد صعوبة", "2. Things I can do on my own": "2. أشياء أستطيع فعلها بنفسي", "What calms or distracts me without needing anyone else": "ما يهدّئني أو يشتّت انتباهي دون حاجة إلى أحد", "3. People and places that take my mind off things": "3. أشخاص وأماكن تصرف ذهني عن الأمور", "A friend, the library, the mosque, a cafe": "صديق، المكتبة، المسجد، مقهى", "4. People I can ask for help": "4. أشخاص أستطيع طلب المساعدة منهم", "Names and numbers of people I trust": "أسماء وأرقام أشخاص أثق بهم", "5. Professionals I can contact": "5. مختصون أستطيع التواصل معهم", "6. Making my surroundings safer": "6. جعل محيطي أكثر أمانًا", "What I can move away or avoid when I feel at risk": "ما يمكنني إبعاده أو تجنّبه حين أشعر بالخطر", "Save my safety plan": "احفظ خطة سلامتي", "Saved on this device. You can open it any time from Urgent help.": "حُفظت على هذا الجهاز. يمكنك فتحها في أي وقت من «مساعدة عاجلة».", "You have already completed the check-in in this session. You can take it again next time.": "أكملت الفحص بالفعل في هذه الجلسة. يمكنك إعادته في المرة القادمة.", "Tell me a little more first, and then I can put together your takeaway.": "أخبرني بالمزيد أولًا، ثم أستطيع إعداد خلاصتك.", "Support is available.": "الدعم متاح.", "Your request has already been sent.": "أُرسل طلبك بالفعل.", "You can ask for contact at any time. Sharing your contact details is your choice.": "يمكنك طلب التواصل في أي وقت. مشاركة بيانات التواصل خيارٌ يعود إليك.", "Prof. Mayssah El Nayal": "أ.د. ميساء النيال", "Student Wellbeing Center": "مركز رفاهية الطلبة", "GMU Student Wellbeing Center": "مركز رفاهية الطلبة – جامعة الخليج الطبية", "Typing": "يكتب", "Anxious": "القلق", "Overwhelmed": "الضغط الشديد", "Sad": "الحزن", "Lonely": "الوحدة", "Angry": "الغضب", "Exhausted": "الإنهاك", "Numb": "التبلّد", "Okay": "بخير", "I am feeling anxious.": "أشعر بالقلق.", "I am feeling overwhelmed.": "أشعر بضغط شديد.", "I am feeling sad.": "أشعر بالحزن.", "I am feeling lonely.": "أشعر بالوحدة.", "I am feeling angry.": "أشعر بالغضب.", "I am feeling exhausted.": "أشعر بإنهاك شديد.", "I am feeling numb.": "أشعر بتبلّد.", "I am feeling okay.": "أشعر أنني بخير.", "Low": "منخفض", "Good": "جيد", "Very good": "جيد جدًا", "See": "أرى", "Hear": "أسمع", "Touch": "ألمس", "Smell": "أشمّ", "Taste": "أتذوّق", "Back": "رجوع", "Delete": "حذف", "Change": "تغيير", "Check-in": "تسجيل المزاج", "My check-ins": "تسجيلاتي", "My small steps": "خطواتي الصغيرة", "My privacy": "خصوصيتي", "Earlier entries": "مدخلات سابقة", "Send request": "إرسال الطلب", "Yes": "نعم", "No": "لا", "On": "مفعّل", "Off": "متوقف", "Pause": "إيقاف مؤقت", "Reset": "إعادة ضبط", "Start": "ابدأ", "Stop": "إيقاف", "Hold": "احبس", "Morning": "الصباح", "Afternoon": "بعد الظهر", "Evening": "المساء", "Review": "مراجعة", "Understand": "فهم", "Listen": "استماع", "Safety": "السلامة", "Support": "الدعم", "General": "عام", "Extremely": "بشدة", "A little": "قليلًا", "Classical": "كلاسيكية", "WhatsApp": "واتساب", "Your takeaway": "خلاصتك", "What is happening:": "ما الذي يحدث:", "Why it happens:": "لماذا يحدث ذلك:", "What helps:": "ما الذي يساعد:", "When to get more help:": "متى تطلب مزيدًا من المساعدة:", "Why it matters:": "لماذا يهم ذلك:", "Read: procrastination": "اقرأ: التسويف", "Good morning": "صباح الخير", "Good afternoon": "مساء الخير", "Good evening": "مساء الخير", "Mental health support line": "خط دعم الصحة النفسية", "Free, daily 8 am to 8 pm, in Arabic and English": "مجاني، يوميًا من 8 صباحًا إلى 8 مساءً، بالعربية والإنجليزية", "Police emergency": "شرطة الطوارئ", "For immediate danger": "للخطر الوشيك", "Ambulance": "الإسعاف", "For medical emergencies": "للحالات الطبية الطارئة", "Prof. Mayssah El Nayal, Director": "أ.د. ميساء النيال، المديرة", "Box Breathing": "التنفس المربّع", "Sit comfortably and let your shoulders drop. Breathe out slowly through your mouth until your lungs feel empty.": "اجلس بارتياح ودع كتفيك يسترخيان. ازفر ببطء من فمك حتى تشعر أن رئتيك فرغتا.", "Follow the circle: breathe in for 4, hold for 4, breathe out for 4, hold for 4. We will do four rounds at a steady pace.": "تتبّع الدائرة: شهيق لأربع عدّات، احبس أربعًا، زفير أربعًا، احبس أربعًا. سنكرر ذلك أربع جولات بإيقاع ثابت.", "Return to normal breathing. Notice whether your chest or shoulders feel even a little looser than before.": "عُد إلى تنفسك الطبيعي. لاحظ هل صار صدرك أو كتفاك أكثر ارتخاءً ولو قليلًا.", "5-4-3-2-1 Grounding": "التأريض 5-4-3-2-1", "Look around the room and quietly name 5 things you can see. Take your time with each one.": "انظر حولك في الغرفة وسمِّ بهدوء 5 أشياء تراها. خذ وقتك مع كل واحد منها.", "Now notice 4 things you can touch or feel, such as your feet on the floor or the fabric of your clothes. Then listen for 3 sounds.": "الآن لاحظ 4 أشياء تستطيع لمسها أو الإحساس بها، مثل قدميك على الأرض أو ملمس ملابسك. ثم أصغِ إلى 3 أصوات.", "Finally, find 2 things you can smell and 1 thing you can taste, or take one slow sip of water. Notice how your mind feels now.": "أخيرًا، ابحث عن شيئين تشمّهما وشيء واحد تتذوقه، أو خذ رشفة ماء بطيئة. لاحظ كيف يبدو ذهنك الآن.", "Progressive Muscle Relaxation": "الاسترخاء العضلي التدريجي", "Make tight fists for 5 seconds, then release and notice the difference for 10 seconds. Do the same with your arms and shoulders.": "اضغط قبضتيك بقوة لمدة 5 ثوانٍ، ثم أرخِهما ولاحظ الفرق لمدة 10 ثوانٍ. افعل الشيء نفسه مع ذراعيك وكتفيك.", "Now tense your face and jaw, then your stomach and legs, for 5 seconds each, releasing slowly after every one.": "الآن شدّ وجهك وفكّك، ثم بطنك وساقيك، لمدة 5 ثوانٍ لكل منها، مع إرخاء بطيء بعد كل واحدة.", "Take three slow breaths and scan your body from head to toe, letting each part feel a little heavier.": "خذ ثلاثة أنفاس بطيئة وامسح جسدك من الرأس إلى القدمين، تاركًا كل جزء يزداد ثقلًا واسترخاءً.", "Worry Dump": "تفريغ الهموم", "Take a piece of paper or open your phone notes. Write down every worry in your mind without organising them. Give it two minutes.": "خذ ورقة أو افتح ملاحظات هاتفك. اكتب كل همّ في ذهنك دون ترتيب. امنح ذلك دقيقتين.", "Next to each worry, write one small action for tomorrow, or write \"cannot control\" if nothing can be done tonight.": "بجانب كل همّ، اكتب خطوة صغيرة للغد، أو اكتب «لا أستطيع التحكم» إذا لم يكن بالإمكان فعل شيء الليلة.", "Close the page and tell yourself these are parked until morning. Breathe in for 4 and out for 6, three times.": "أغلق الصفحة وقل لنفسك إن هذه الهموم مؤجلة حتى الصباح. تنفّس شهيقًا لأربع عدّات وزفيرًا لست، ثلاث مرات.", "Thought Reframing": "إعادة صياغة الأفكار", "Write the situation in one sentence, then the thought that went through your mind, for example: \"I am going to fail.\"": "اكتب الموقف في جملة واحدة، ثم الفكرة التي خطرت لك، مثل: «سأفشل».", "Ask yourself: what evidence supports this thought, and what evidence does not? Would you say the same sentence to a close friend?": "اسأل نفسك: ما الدليل الذي يدعم هذه الفكرة، وما الدليل الذي لا يدعمها؟ وهل كنت ستقول الجملة نفسها لصديق مقرّب؟", "Write a more balanced version, such as: \"This is hard and I am worried, but I have prepared and I can do my best.\" Read it aloud once.": "اكتب صيغة أكثر توازنًا، مثل: «هذا صعب وأنا قلق، لكنني استعددت وأستطيع أن أبذل ما بوسعي». اقرأها بصوت عالٍ مرة واحدة.", "Safe Place Visualisation": "تخيّل المكان الآمن", "Settle into your seat and take three slow breaths. Picture a place where you feel completely safe and calm, real or imagined, and let the scene begin to form.": "استقر في مقعدك وخذ ثلاثة أنفاس بطيئة. تخيّل مكانًا تشعر فيه بالأمان والهدوء التام، حقيقيًا كان أو متخيَّلًا، ودع المشهد يتشكل.", "Look around this place. Notice the colours and the light, any sounds, and the temperature of the air on your skin. Let the details grow vivid and let yourself be there.": "انظر حولك في هذا المكان. لاحظ الألوان والضوء وأي أصوات ودرجة حرارة الهواء على بشرتك. دع التفاصيل تزداد وضوحًا وعِش فيه.", "Breathe this place in for a few moments, and tell yourself that you can return here whenever you need to. When you are ready, gently bring your attention back to the room.": "استنشق هذا المكان لبضع لحظات، وقل لنفسك إنك تستطيع العودة إليه متى احتجت. وحين تكون مستعدًا، أعد انتباهك برفق إلى الغرفة.", "Butterfly Hug": "عناق الفراشة", "Cross your arms over your chest so each hand rests on the opposite shoulder, like a pair of folded wings.": "اعقد ذراعيك على صدرك بحيث تستقر كل يد على الكتف المقابل، كجناحين مطويين.", "Tap your hands slowly and alternately, left then right, following the gentle glow on the screen. Keep your breathing soft and even.": "اطرق بيديك ببطء وبالتناوب، يسارًا ثم يمينًا، تابعًا التوهج اللطيف على الشاشة. حافظ على تنفس هادئ ومنتظم.", "Let the taps slow and fade, then rest your hands and notice how your body feels now compared with when you began.": "دع الطرقات تبطئ وتخفت، ثم أرح يديك ولاحظ كيف يشعر جسدك الآن مقارنة بما كنت عليه عند البداية.", "Exam fear and going blank": "الخوف من الامتحان وفراغ الذهن", "Before an exam your body switches on its alarm system. Your heart speeds up, your stomach tightens, and your mind can go blank.": "قبل الامتحان يشغّل جسدك نظام الإنذار. يتسارع قلبك، وتنقبض معدتك، وقد يفرغ ذهنك.", "The brain treats the exam as a threat and narrows its attention. That makes recall harder for a while. It says nothing about how much you know.": "يتعامل الدماغ مع الامتحان كأنه تهديد فيضيّق انتباهه، مما يجعل التذكّر أصعب لبعض الوقت. وهذا لا يدل على مقدار ما تعرفه.", "Slow your breathing out for longer than you breathe in. Break revision into one small task at a time. Sleep matters more than one more late hour of study. In the exam, start with a question you can answer.": "ازفر ببطء لمدة أطول من الشهيق. قسّم المراجعة إلى مهمة صغيرة واحدة في كل مرة. النوم أهم من ساعة سهر إضافية. وفي الامتحان ابدأ بسؤال تستطيع الإجابة عنه.", "If fear stops you studying or sitting exams, or it comes with panic or weeks of poor sleep, speak with the Student Wellbeing Center.": "إذا كان الخوف يمنعك من الدراسة أو دخول الامتحانات، أو ترافق مع هلع أو أسابيع من النوم السيئ، فتحدّث إلى مركز رفاهية الطلبة.", "Feeling overwhelmed": "الشعور بالإرهاق والضغط", "When demands pile up faster than you can meet them, everything starts to feel urgent at once, and it becomes hard to begin anything.": "حين تتراكم المطالب أسرع مما تستطيع تلبيتها، يبدو كل شيء عاجلًا في آن واحد، ويصعب البدء بأي شيء.", "Under pressure the mind keeps scanning every unfinished task, which is tiring and makes each one look bigger than it is.": "تحت الضغط يواصل الذهن مسح كل مهمة لم تكتمل، وهذا مُتعب ويجعل كل مهمة تبدو أكبر مما هي.", "Write everything down so it is out of your head. Choose only the next small step, not the whole mountain. Take short breaks and move your body. Tell someone what you are carrying.": "اكتب كل شيء لتُخرجه من رأسك. اختر الخطوة الصغيرة التالية فقط لا الجبل كله. خذ استراحات قصيرة وحرّك جسدك. وأخبر شخصًا بما تحمله.", "If the pressure has lasted for weeks, or you feel hopeless or unable to cope, speak with the Student Wellbeing Center.": "إذا استمر الضغط أسابيع، أو شعرت باليأس أو العجز عن التحمل، فتحدّث إلى مركز رفاهية الطلبة.", "When you cannot sleep": "حين يعجز النوم", "You are tired, but your mind keeps running when you lie down, or you wake in the night and cannot settle.": "أنت متعب، لكن ذهنك يظل يعمل حين تستلقي، أو تستيقظ في الليل ولا تستطيع الاستقرار.", "Worry keeps the body alert, and trying hard to force sleep makes the mind more awake. Late screens, caffeine and irregular hours add to it.": "القلق يُبقي الجسد في حالة تأهب، ومحاولة إجبار النوم تجعل الذهن أكثر يقظة. كما تزيد الشاشات المتأخرة والكافيين والمواعيد غير المنتظمة من المشكلة.", "Keep a regular wake-up time. Write tomorrow’s worries down an hour before bed. Dim the lights and put the phone away. If you cannot sleep after a while, get up, do something quiet, and return when sleepy.": "حافظ على وقت استيقاظ ثابت. اكتب هموم الغد قبل النوم بساعة. اخفض الإضاءة وابعد الهاتف. وإن لم تنم بعد فترة، فانهض وافعل شيئًا هادئًا وعُد حين تشعر بالنعاس.", "If poor sleep lasts more than a few weeks or affects your studies or mood, speak with the Student Wellbeing Center or a doctor.": "إذا استمر سوء النوم أكثر من بضعة أسابيع أو أثّر على دراستك أو مزاجك، فتحدّث إلى مركز رفاهية الطلبة أو إلى طبيب.", "Low mood and losing interest": "انخفاض المزاج وفقدان الاهتمام", "You may feel flat, tired or tearful, and things you used to enjoy can feel like an effort.": "قد تشعر بالفتور أو التعب أو الرغبة في البكاء، وقد تبدو الأشياء التي كنت تستمتع بها مجهودًا شاقًا.", "Low mood often follows stress, loss, loneliness or exhaustion. When we feel low we do less, and doing less tends to deepen the low mood.": "غالبًا ما يعقب انخفاضَ المزاج ضغطٌ أو فقد أو وحدة أو إنهاك. وحين نشعر بالانخفاض نفعل أقل، والفعل الأقل يزيد انخفاض المزاج.", "Plan one small activity each day that gives a sense of pleasure or achievement, even if you do not feel like it. Keep to regular meals, daylight and movement. Stay in touch with at least one person.": "خطّط لنشاط صغير كل يوم يمنحك شعورًا بالمتعة أو الإنجاز، حتى لو لم تكن ترغب فيه. حافظ على الوجبات المنتظمة وضوء النهار والحركة. وابقَ على تواصل مع شخص واحد على الأقل.", "If low mood lasts most days for two weeks or more, or you have thoughts of harming yourself, contact the Student Wellbeing Center. In an emergency use Urgent help.": "إذا استمر انخفاض المزاج في معظم الأيام لأسبوعين أو أكثر، أو راودتك أفكار إيذاء نفسك، فتواصل مع مركز رفاهية الطلبة. وفي الطوارئ استخدم «مساعدة عاجلة».", "Homesickness and loneliness": "الحنين إلى الوطن والشعور بالوحدة", "You miss home, your family or familiar routines, and you may feel alone even when people are around you.": "تشتاق إلى بيتك وأسرتك وروتينك المألوف، وقد تشعر بالوحدة حتى وأنت بين الناس.", "Moving away removes the people and habits that normally steady us. It is very common, especially in the first year, and it reflects strong bonds, not weakness.": "الابتعاد يُزيل الأشخاص والعادات التي تمنحنا الثبات عادةً. وهذا شائع جدًا، خاصة في السنة الأولى، ويعكس روابط قوية لا ضعفًا.", "Keep regular contact with home, but also build one small routine here. Say yes to one invitation a week. Join one group that matches an interest. Small, repeated contact builds friendships.": "حافظ على تواصل منتظم مع أهلك، لكن ابنِ أيضًا روتينًا صغيرًا هنا. قل نعم لدعوة واحدة كل أسبوع. انضم إلى مجموعة تناسب اهتمامك. فالتواصل الصغير المتكرر يبني الصداقات.", "If loneliness is making it hard to study, sleep or eat, speak with the Student Wellbeing Center.": "إذا جعلت الوحدة الدراسة أو النوم أو الأكل صعبة، فتحدّث إلى مركز رفاهية الطلبة.", "Bullying and being treated badly": "التنمّر وسوء المعاملة", "Someone is repeatedly hurting, excluding, mocking or pressuring you, in person or online.": "شخص ما يؤذيك أو يستبعدك أو يسخر منك أو يضغط عليك بشكل متكرر، شخصيًا أو عبر الإنترنت.", "Being treated this way is never your fault. It can cause anxiety, low mood and loss of confidence, and it usually does not stop on its own.": "سوء معاملتك ليس خطأك أبدًا. فقد يسبب القلق وانخفاض المزاج وفقدان الثقة، وغالبًا لا يتوقف من تلقاء نفسه.", "Keep a record of what happened and when. Do not respond in anger online; save the messages instead. Tell someone you trust. You have the right to feel safe at university.": "دوّن ما حدث ومتى. لا تردّ بغضب عبر الإنترنت؛ بل احفظ الرسائل. أخبر شخصًا تثق به. من حقك أن تشعر بالأمان في الجامعة.", "Please speak with the Student Wellbeing Center so that you are supported and the right steps can be taken. If you are in danger, use Urgent help.": "يُرجى التحدث إلى مركز رفاهية الطلبة ليتم دعمك واتخاذ الخطوات المناسبة. وإذا كنت في خطر فاستخدم «مساعدة عاجلة».", "Family pressure and expectations": "ضغط الأسرة وتوقعاتها", "You feel torn between what your family hopes for and what you can manage or want, and you may fear letting them down.": "تشعر بأنك ممزق بين ما تأمله أسرتك وما تستطيعه أو تريده، وقد تخشى أن تخذلهم.", "Families often show care through high hopes. When those hopes feel heavier than your own voice, guilt and pressure build.": "غالبًا ما تُظهر الأسر اهتمامها بآمال كبيرة. وحين تبدو هذه الآمال أثقل من صوتك أنت، يتراكم الذنب والضغط.", "Separate what is truly expected from what you assume. Choose one calm moment to share how you are really doing. Remember that your worth is not the same as your grades.": "فرّق بين ما هو متوقَّع فعلًا وما تفترضه. اختر لحظة هادئة لتشارك حالك الحقيقي. وتذكّر أن قيمتك ليست مرادفة لدرجاتك.", "If the pressure is affecting your health or studies, or home does not feel safe, speak with the Student Wellbeing Center.": "إذا كان الضغط يؤثر على صحتك أو دراستك، أو لم يعد البيت يبدو آمنًا، فتحدّث إلى مركز رفاهية الطلبة.", "Panic and racing thoughts": "الهلع والأفكار المتسارعة", "A sudden wave of fear with a pounding heart, short breath, shaking or dizziness. It can feel as if something terrible is about to happen.": "موجة مفاجئة من الخوف مع خفقان القلب وقِصر النفس والارتجاف أو الدوار. وقد تشعر كأن أمرًا فظيعًا على وشك الحدوث.", "The body’s alarm has fired without real danger. The sensations are frightening but they pass, usually within minutes.": "أطلق إنذار الجسد دون وجود خطر حقيقي. الأحاسيس مخيفة لكنها تزول، عادةً خلال دقائق.", "Breathe out slowly and for longer than you breathe in. Name five things you can see and four you can touch. Remind yourself: this is panic, it will pass. Stay where you are until it eases.": "ازفر ببطء ولمدة أطول من الشهيق. سمِّ خمسة أشياء تراها وأربعة تلمسها. ذكّر نفسك: هذا هلع وسيمرّ. ابقَ مكانك حتى يخف.", "If attacks keep returning or you start avoiding places, speak with the Student Wellbeing Center. Chest pain that is new or severe needs a doctor.": "إذا تكررت النوبات أو بدأت تتجنب أماكن، فتحدّث إلى مركز رفاهية الطلبة. أما ألم الصدر الجديد أو الشديد فيحتاج إلى طبيب.", "Procrastination and low motivation": "التسويف وضعف الدافعية", "You keep putting work off, then feel guilty, which makes it even harder to start.": "تؤجّل عملك مرارًا ثم تشعر بالذنب، مما يجعل البدء أصعب.", "Putting things off is usually a way of avoiding an uncomfortable feeling such as fear of failing, not laziness.": "التأجيل غالبًا وسيلة لتجنّب شعور غير مريح كالخوف من الفشل، وليس كسلًا.", "Make the first step tiny: open the file and work for five minutes. Use a timer for 25 minutes of focus and a 5 minute break. Work beside someone. Be kind to yourself after a slow day.": "اجعل الخطوة الأولى صغيرة جدًا: افتح الملف واعمل خمس دقائق. استخدم مؤقتًا لـ25 دقيقة تركيز و5 دقائق راحة. اعمل بجانب شخص آخر. وكن لطيفًا مع نفسك بعد يوم بطيء.", "If you cannot get started for weeks, or it comes with low mood or poor sleep, speak with the Student Wellbeing Center.": "إذا عجزت عن البدء لأسابيع، أو ترافق ذلك مع انخفاض المزاج أو سوء النوم، فتحدّث إلى مركز رفاهية الطلبة.", "Calm Room is an AI companion that offers supportive listening and short relaxation exercises. It is not a therapist, cannot diagnose, and is not for emergencies. If you are in danger or thinking of harming yourself, use Urgent help at the top of the page.": "غرفة الهدوء رفيق يعمل بالذكاء الاصطناعي يقدّم الإصغاء الداعم وتمارين استرخاء قصيرة. وهو ليس معالجًا نفسيًا ولا يستطيع التشخيص، ولا يُستخدم في حالات الطوارئ. إذا كنت في خطر أو تفكر في إيذاء نفسك، فاستخدم «مساعدة عاجلة» في أعلى الصفحة.", "Thank you for telling me. What you are feeling matters, and you deserve support from a real person right now. Please contact one of the services below, or go to someone you trust nearby.": "شكرًا لأنك أخبرتني. ما تشعر به مهم، وأنت تستحق دعم شخص حقيقي الآن. يُرجى التواصل مع إحدى الجهات أدناه، أو التوجه إلى شخص تثق به قريب منك.", "The counselling team aims to contact you within about one week. If things get worse before then, use Urgent help at the top of the page.": "يهدف فريق الإرشاد إلى التواصل معك خلال نحو أسبوع. وإذا ساءت الأمور قبل ذلك، فاستخدم «مساعدة عاجلة» في أعلى الصفحة.", "The counselling team aims to contact you within 1 to 2 working days. If things get worse before then, use Urgent help at the top of the page.": "يهدف فريق الإرشاد إلى التواصل معك خلال يوم إلى يومي عمل. وإذا ساءت الأمور قبل ذلك، فاستخدم «مساعدة عاجلة» في أعلى الصفحة.", "The counselling team will be alerted straight away during working hours. Please do not wait for a reply if you are in danger: contact your local emergency services, or go to the nearest hospital emergency department.": "سيتم تنبيه فريق الإرشاد فورًا خلال ساعات الدوام. يُرجى ألا تنتظر الرد إذا كنت في خطر: اتصل بخدمات الطوارئ المحلية، أو توجّه إلى أقرب قسم طوارئ في المستشفى.", "Calm Room is an AI companion. It offers first-line support only: it is not a therapist, cannot diagnose, and does not replace a counsellor.": "غرفة الهدوء رفيق يعمل بالذكاء الاصطناعي. وهي تقدّم دعمًا أوليًا فقط: فهي ليست معالجًا نفسيًا، ولا تستطيع التشخيص، ولا تحلّ محلّ المرشد.", "In an emergency, contact your local emergency services or go to the nearest hospital.": "وفي حالات الطوارئ اتصل بخدمات الطوارئ المحلية، أو توجّه إلى أقرب مستشفى.", "Your messages are processed by an AI service. The app keeps only a summary and your scores, not your conversation.": "تتم معالجة رسائلك بواسطة خدمة ذكاء اصطناعي. ويحتفظ التطبيق بملخص ودرجاتك فقط، لا بمحادثتك.", "If you ask for contact, or your answers suggest you may be at risk, the counselling team may be alerted, using only the contact details you choose to give.": "إذا طلبت التواصل، أو أشارت إجاباتك إلى أنك قد تكون معرّضًا للخطر، فقد يتم تنبيه فريق الإرشاد، باستخدام بيانات التواصل التي تختار تقديمها فقط.", "Taking part is voluntary and you can stop at any time.": "المشاركة طوعية ويمكنك التوقف في أي وقت.", "What Calm Room is. Calm Room is a confidential, AI-assisted first-line wellbeing companion offered by the GMU Student Wellbeing Center. It provides supportive listening, calming tools and short coping techniques, in line with recognised mental-health best practice, which values prevention, early support and reducing stigma. It is not a therapist, cannot diagnose, and does not replace professional care.": "ما هي غرفة الهدوء. غرفة الهدوء رفيق سرّي للرفاهية يعمل بمساعدة الذكاء الاصطناعي ويقدّم دعمًا أوليًا، ويقدّمه مركز رفاهية الطلبة في جامعة الخليج الطبية. وهي توفّر الإصغاء الداعم وأدوات التهدئة وتقنيات قصيرة للتأقلم، بما ينسجم مع أفضل الممارسات المعتمدة في الصحة النفسية التي تُعلي من الوقاية والدعم المبكر والحدّ من الوصمة. وهي ليست معالجًا نفسيًا ولا تستطيع التشخيص ولا تحلّ محلّ الرعاية المتخصصة.", "Not for emergencies. If you are in danger or thinking of harming yourself, use Urgent help at the top of the screen, contact your local emergency services, or go to the nearest hospital.": "ليست للطوارئ. إذا كنت في خطر أو تفكر في إيذاء نفسك، فاستخدم «مساعدة عاجلة» في أعلى الشاشة، أو اتصل بخدمات الطوارئ المحلية، أو توجّه إلى أقرب مستشفى.", "Your choice to stay anonymous. You may use Calm Room without giving your name. If you choose to share your details, they are used only so the Student Wellbeing Center can follow up with you.": "حقك في عدم الكشف عن هويتك. يمكنك استخدام غرفة الهدوء دون ذكر اسمك. وإذا اخترت مشاركة بياناتك، فتُستخدم فقط ليتمكن مركز رفاهية الطلبة من المتابعة معك.", "How your information is used. Your messages are processed by an AI service to generate replies. Calm Room keeps only a short summary of each session and your wellbeing scores, never the conversation itself. Summaries and any contact details are visible only to authorised Student Wellbeing Center staff.": "كيف تُستخدم معلوماتك. تتم معالجة رسائلك بواسطة خدمة ذكاء اصطناعي لتوليد الردود. تحتفظ غرفة الهدوء بملخص قصير لكل جلسة ودرجات رفاهيتك فقط، ولا تحتفظ بالمحادثة نفسها أبدًا. والملخصات وأي بيانات تواصل لا يطّلع عليها إلا العاملون المخوّلون في مركز رفاهية الطلبة.", "What stays on your device. Your daily mood check-ins, journal, personal plan and safety plan are stored only in your own browser on your own device. They are never sent to the university. A journal entry is sent to the AI service only if you tap Reflect with me. On a shared device, please delete your data when you finish.": "ما يبقى على جهازك. تُحفظ تسجيلات مزاجك اليومية ويومياتك وخطتك الشخصية وخطة سلامتك في متصفحك على جهازك فقط. ولا تُرسل أبدًا إلى الجامعة. ولا يُرسل إدخال اليوميات إلى خدمة الذكاء الاصطناعي إلا إذا ضغطت «تأمّل معي». وعلى الأجهزة المشتركة، يُرجى حذف بياناتك عند الانتهاء.", "When a counsellor may be alerted. If your answers suggest you may be at risk, or if you ask to be contacted, an alert containing your scores and summary (and your contact details only if you shared them) is sent to the Director of the Student Wellbeing Center, Prof. Mayssah El Nayal, and recorded securely. This is to keep you safe.": "متى قد يتم تنبيه مرشد. إذا أشارت إجاباتك إلى أنك قد تكون معرّضًا للخطر، أو إذا طلبت أن يتم التواصل معك، يُرسل تنبيه يتضمن درجاتك وملخصك (وبيانات تواصلك فقط إن شاركتها) إلى مديرة مركز رفاهية الطلبة، أ.د. ميساء النيال، ويُسجَّل بشكل آمن. وذلك لضمان سلامتك.", "Your rights. Taking part is voluntary and you can stop at any time. You may ask the Student Wellbeing Center what is held about you. This service follows the relevant institutional policy and applicable data-protection principles.": "حقوقك. المشاركة طوعية ويمكنك التوقف في أي وقت. ويمكنك أن تسأل مركز رفاهية الطلبة عمّا يُحتفظ به عنك. وتلتزم هذه الخدمة بسياسة جامعة الخليج الطبية ومبادئ حماية البيانات في دولة الإمارات.", "By continuing, you confirm that you have read and understood this policy and agree to take part.": "بمتابعتك، فإنك تؤكد أنك قرأت هذه السياسة وفهمتها وتوافق على المشاركة.", "What Calm Room is. Calm Room is a confidential, AI-assisted first-line wellbeing companion offered by the GMU Student Wellbeing Center. It provides supportive listening, calming tools and short coping techniques, in line with recognised mental-health best practice, which values prevention, early support and reducing stigma. It is not a therapist, cannot diagnose, and does not replace professional care.\nNot for emergencies. If you are in danger or thinking of harming yourself, use Urgent help at the top of the screen, contact your local emergency services, or go to the nearest hospital.\nYour choice to stay anonymous. You may use Calm Room without giving your name. If you choose to share your details, they are used only so the Student Wellbeing Center can follow up with you.\nHow your information is used. Your messages are processed by an AI service to generate replies. Calm Room keeps only a short summary of each session and your wellbeing scores, never the conversation itself. Summaries and any contact details are visible only to authorised Student Wellbeing Center staff.\nWhat stays on your device. Your daily mood check-ins, journal, personal plan and safety plan are stored only in your own browser on your own device. They are never sent to the university. A journal entry is sent to the AI service only if you tap Reflect with me. On a shared device, please delete your data when you finish.\nWhen a counsellor may be alerted. If your answers suggest you may be at risk, or if you ask to be contacted, an alert containing your scores and summary (and your contact details only if you shared them) is sent to the Director of the Student Wellbeing Center, Prof. Mayssah El Nayal, and recorded securely. This is to keep you safe.\nYour rights. Taking part is voluntary and you can stop at any time. You may ask the Student Wellbeing Center what is held about you. This service follows the relevant institutional policy and applicable data-protection principles.\nBy continuing, you confirm that you have read and understood this policy and agree to take part.": "ما هي غرفة الهدوء. غرفة الهدوء رفيق سرّي للرفاهية يعمل بمساعدة الذكاء الاصطناعي ويقدّم دعمًا أوليًا، ويقدّمه مركز رفاهية الطلبة في جامعة الخليج الطبية. وهي توفّر الإصغاء الداعم وأدوات التهدئة وتقنيات قصيرة للتأقلم، بما ينسجم مع أفضل الممارسات المعتمدة في الصحة النفسية التي تُعلي من الوقاية والدعم المبكر والحدّ من الوصمة. وهي ليست معالجًا نفسيًا ولا تستطيع التشخيص ولا تحلّ محلّ الرعاية المتخصصة.\nليست للطوارئ. إذا كنت في خطر أو تفكر في إيذاء نفسك، فاستخدم «مساعدة عاجلة» في أعلى الشاشة، أو اتصل بخدمات الطوارئ المحلية، أو توجّه إلى أقرب مستشفى.\nحقك في عدم الكشف عن هويتك. يمكنك استخدام غرفة الهدوء دون ذكر اسمك. وإذا اخترت مشاركة بياناتك، فتُستخدم فقط ليتمكن مركز رفاهية الطلبة من المتابعة معك.\nكيف تُستخدم معلوماتك. تتم معالجة رسائلك بواسطة خدمة ذكاء اصطناعي لتوليد الردود. تحتفظ غرفة الهدوء بملخص قصير لكل جلسة ودرجات رفاهيتك فقط، ولا تحتفظ بالمحادثة نفسها أبدًا. والملخصات وأي بيانات تواصل لا يطّلع عليها إلا العاملون المخوّلون في مركز رفاهية الطلبة.\nما يبقى على جهازك. تُحفظ تسجيلات مزاجك اليومية ويومياتك وخطتك الشخصية وخطة سلامتك في متصفحك على جهازك فقط. ولا تُرسل أبدًا إلى الجامعة. ولا يُرسل إدخال اليوميات إلى خدمة الذكاء الاصطناعي إلا إذا ضغطت «تأمّل معي». وعلى الأجهزة المشتركة، يُرجى حذف بياناتك عند الانتهاء.\nمتى قد يتم تنبيه مرشد. إذا أشارت إجاباتك إلى أنك قد تكون معرّضًا للخطر، أو إذا طلبت أن يتم التواصل معك، يُرسل تنبيه يتضمن درجاتك وملخصك (وبيانات تواصلك فقط إن شاركتها) إلى مديرة مركز رفاهية الطلبة، أ.د. ميساء النيال، ويُسجَّل بشكل آمن. وذلك لضمان سلامتك.\nحقوقك. المشاركة طوعية ويمكنك التوقف في أي وقت. ويمكنك أن تسأل مركز رفاهية الطلبة عمّا يُحتفظ به عنك. وتلتزم هذه الخدمة بسياسة جامعة الخليج الطبية ومبادئ حماية البيانات في دولة الإمارات.\nبمتابعتك، فإنك تؤكد أنك قرأت هذه السياسة وفهمتها وتوافق على المشاركة.", "If it helps, tap the word closest to how you feel right now. You can also just type or speak.": "إن أفادك ذلك، اضغط الكلمة الأقرب إلى ما تشعر به الآن. ويمكنك أيضًا أن تكتب أو تتحدث.", "Keep talking with me": "واصل الحديث معي", "A short check-in, if you would like": "فحص قصير، إن رغبت", "If it would help, I can ask a few short, standard questions to understand how you have been feeling lately. It is completely optional, and we can keep talking either way.": "إن كان ذلك مفيدًا، يمكنني أن أطرح بضعة أسئلة قصيرة وقياسية لأفهم كيف كان حالك مؤخرًا. وهذا اختياري تمامًا، ويمكننا مواصلة الحديث في الحالتين.", "Yes, let us do it": "نعم، لنفعل ذلك", "3 sounds": "3 أصوات", "2 things": "شيئان", "Press start, then tense each highlighted area for five seconds and release.": "اضغط «ابدأ»، ثم شدّ كل منطقة مُضاءة لمدة خمس ثوانٍ ثم أرخِها.", "Let your gaze rest softly on the scene as you picture your own safe place.": "دع نظرك يستقر بلطف على المشهد وأنت تتخيل مكانك الآمن.", "Here is your calming sound. Take a slow breath and let it settle you.": "هذا صوتك المهدّئ. خذ نفسًا بطيئًا ودعه يمنحك السكينة.", "From the counselling team:": "من فريق الإرشاد:", "Or choose a style to find on YouTube:": "أو اختر نمطًا للبحث عنه في يوتيوب:", "Spiritual / recitation": "روحانية / تلاوة", "Type a singer, song or style": "اكتب اسم مغنٍّ أو أغنية أو نمطًا", "I feel ready to continue": "أشعر أنني مستعد للمتابعة", "Share how to reach you and the team will get in touch.": "شارك طريقة التواصل معك وسيتواصل معك الفريق.", "Best time to reach you": "أنسب وقت للتواصل معك", "I agree that the counselling team may contact me using these details.": "أوافق على أن يتواصل معي فريق الإرشاد عبر هذه البيانات.", "Please reach out to a support service now.": "يُرجى التواصل مع جهة دعم الآن.", "Please speak to a person now": "يُرجى التحدث إلى شخص الآن", "If you are in danger, contact your local emergency services, or go to the nearest hospital emergency department. You do not have to be alone with this.": "هذا التطبيق لا يخضع للمراقبة اللحظية. إذا كنت في خطر، فاتصل بخدمات الطوارئ المحلية، أو توجّه إلى أقرب قسم طوارئ في مستشفى. ليس عليك أن تواجه هذا وحدك.", "How are you feeling today?": "كيف حالك اليوم؟", "I am sorry today feels heavy. Would it help to talk it through, or to do something calming first?": "يؤسفني أن اليوم يبدو ثقيلًا. هل يفيدك أن نتحدث عنه، أم أن نبدأ بشيء مهدّئ أولًا؟", "Guided techniques": "تقنيات موجَّهة", "Well done. Notice how your body feels now, even a little.": "أحسنت. لاحظ كيف يشعر جسدك الآن، ولو قليلًا.", "A second": "الثانية", "A third": "الثالثة", "Add my own small step": "أضف خطوتي الصغيرة الخاصة", "How I have been feeling": "كيف كان حالي", "Tap again to confirm deletion": "اضغط مرة أخرى لتأكيد الحذف", "Well done. Take a 5 minute break.": "أحسنت. خذ استراحة لمدة 5 دقائق.", "Break over. Ready for another block?": "انتهت الاستراحة. هل أنت مستعد لفترة أخرى؟", "For example: read two pages of chapter 3": "مثال: اقرأ صفحتين من الفصل الثالث", "Added. You will see it on Home.": "تمت الإضافة. ستراها في الصفحة الرئيسية.", "Parked in your journal. They will still be there tomorrow, and so will you.": "حُفظت في يومياتك. ستبقى هناك غدًا، وستكون أنت أيضًا بخير.", "Reach someone now": "تواصل مع أحد الآن", "Open the voice page.": "افتح صفحة الصوت.", "The app could not load its settings. Please refresh the page.": "تعذّر على التطبيق تحميل إعداداته. يُرجى تحديث الصفحة.", "This page needs API_URL to be set to your Apps Script web app address.": "تحتاج هذه الصفحة إلى ضبط API_URL على عنوان تطبيق Apps Script.", "Prof. Mayssah El Nayal, Student Wellbeing Center": "أ.د. ميساء النيال، مركز رفاهية الطلبة", "Drag to turn the figure": "اسحب لتدوير المجسّم", "Tense and hold": "شدّ واثبت", "Release and let go": "أرخِ ودع التوتر يذهب", "Let each worry leave your mind and land on the page.": "دع كل همّ يغادر ذهنك ويستقر على الصفحة.", "Watch the heavy thought soften into a fairer, kinder one.": "راقب الفكرة الثقيلة وهي تلين لتصبح أكثر إنصافًا ولطفًا.", "A 3D figure demonstrating the exercise.": "مجسّم ثلاثي الأبعاد يوضّح التمرين.", "Hear this step": "استمع إلى هذه الخطوة", "Emergency services": "خدمات الطوارئ", "A few things to know": "أشياء بسيطة ينبغي معرفتها", "I'm a friendly AI guide. I'll listen, share simple tips and help you feel a little calmer. I'm not a therapist and don't replace one.": "أنا مرشد ذكاء اصطناعي ودود. سأستمع إليك وأشارك نصائح بسيطة وأساعدك على الشعور بهدوء أكبر. لست معالجًا ولا أحل محله.", "This isn't for emergencies. If you're in danger, contact your local emergency services or someone you trust nearby.": "هذا التطبيق ليس للطوارئ. إذا كنت في خطر، فاتصل بخدمات الطوارئ المحلية أو بشخص تثق به بالقرب منك.", "You can stay anonymous, or share your details so the Student Wellbeing Center can follow up with you.": "يمكنك البقاء مجهول الهوية، أو مشاركة بياناتك ليتمكن مركز رعاية الطلبة من متابعتك.", "For anything ongoing or serious, the Student Wellbeing Center is here to support you.": "لأي أمر مستمر أو جاد، مركز رعاية الطلبة موجود لدعمك.", "I understand this is an AI wellbeing guide, not a counsellor or emergency service.": "أفهم أن هذا مرشد رفاهية يعمل بالذكاء الاصطناعي، وليس مستشارًا أو خدمة طوارئ.", "Hi, I'm Calm.": "مرحبًا، أنا هادئ.", "A friendly guide for stress, worry and sleep. Tell me what's on your mind and I'll guide you to one small thing that helps.": "مرشد ودود للتوتر والقلق والنوم. أخبرني بما يشغل بالك وسأرشدك إلى شيء بسيط يساعدك.", "Want the Student Wellbeing Center to follow up? (optional)": "هل تريد أن يتابعك مركز رعاية الطلبة؟ (اختياري)", "I'm 18 or older, and I understand this is an AI wellbeing guide, not a counsellor or emergency service.": "عمري 18 عامًا أو أكثر، وأفهم أن هذا مرشد رفاهية بالذكاء الاصطناعي وليس مستشارًا أو خدمة طوارئ.", "Let's begin": "هيا نبدأ", "What is on your mind? Tap the closest one and I will guide you from there.": "ما الذي يشغل بالك؟ اضغط على الأقرب وسأرشدك من هناك.", "Exam stress": "توتر الامتحانات", "Can’t sleep": "لا أستطيع النوم", "Overthinking": "الإفراط في التفكير", "Feeling low": "أشعر بالحزن", "Something else, I just want to talk": "شيء آخر، أريد فقط أن أتحدث", "More tools": "أدوات أخرى", "Tap a reply, or type your own.": "اختر ردًا، أو اكتب ردّك.", "Watch a video": "شاهد فيديو", "Close video": "إغلاق الفيديو", "Paste a YouTube link to play it here": "الصق رابط يوتيوب لتشغيله هنا", "Play": "تشغيل", "Not playing? Open it on YouTube": "لا يعمل؟ افتحه على يوتيوب", "Paste a YouTube link below, or pick one from the list, and it will play right here.": "الصق رابط يوتيوب في الأسفل، أو اختر من القائمة، وسيُشغَّل هنا مباشرة.", "That does not look like a YouTube link. Please copy the link from the YouTube share button.": "لا يبدو هذا رابط يوتيوب. يُرجى نسخ الرابط من زر المشاركة في يوتيوب.", "Playing it here. Use the close button when you are finished.": "أشغّله هنا. استخدم زر الإغلاق عند الانتهاء.", "You can watch a video here without leaving the app. Close it whenever you like.": "يمكنك مشاهدة فيديو هنا دون مغادرة التطبيق. أغلقه متى شئت.", "Breathing, sounds, videos and techniques": "التنفس والأصوات والفيديوهات والتقنيات", "Here are a few short videos that may help. Tap one to watch it right here.": "إليك بعض الفيديوهات القصيرة التي قد تساعدك. اضغط على أحدها لمشاهدته هنا.", "Finding videos that match...": "أبحث عن فيديوهات مناسبة...", "Tap a video to watch it here.": "اضغط على فيديو لمشاهدته هنا.", "Tap a video to play it here.": "اضغط على فيديو لتشغيله هنا.", "I could not find a good match.": "لم أجد فيديو مناسبًا.", "Search videos": "ابحث عن فيديوهات", "Open the video player": "افتح مشغّل الفيديو", "Searching...": "جارٍ البحث...", "No videos found. Try different words.": "لم يتم العثور على فيديوهات. جرّب كلمات أخرى.", "Video search is not set up yet. You can still paste a YouTube link.": "البحث عن الفيديوهات غير مفعّل بعد. يمكنك لصق رابط يوتيوب.", "Search for a video below, or paste a YouTube link, and it will play right here.": "ابحث عن فيديو في الأسفل أو الصق رابط يوتيوب وسيُشغَّل هنا مباشرة.", "Search videos, or paste a YouTube link": "ابحث عن فيديوهات أو الصق رابط يوتيوب", "Search": "بحث", "Let me find a few videos that match.": "دعني أبحث عن بعض الفيديوهات المناسبة.", "Videos for you": "فيديوهات لك", "Find a video": "ابحث عن فيديو"};
+    Object.assign(DICT, window.GAME_AR || {}, { 'Play': 'العب', 'Mind game': 'لعبة عقلية' });
     const DL = {}; Object.keys(DICT).forEach(function (k) { DL[k.toLowerCase()] = DICT[k]; });
     let LANG = 'en';
     const orig = new WeakMap();   // text node -> { en, ar }
-    const tr1 = function (s) { const t = String(s).trim(); return DICT[t] !== undefined ? DICT[t] : DL[t.toLowerCase()]; };
+    const tr1 = function (s) { const t = String(s).trim(); return DICT[t] !== undefined ? DICT[t] : (DL[t.toLowerCase()] !== undefined ? DL[t.toLowerCase()] : (window.GAME_AR || {})[t]); };
     const nm = function (s) { const r = tr1(s); return r !== undefined ? r : s; };
     const PAT = [
       [/^Voice mode: (On|Off)$/, function (m) { return 'الوضع الصوتي: ' + (m[1] === 'On' ? 'مفعّل' : 'متوقف'); }],
